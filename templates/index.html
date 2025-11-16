@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthOracle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='logo.ico') }}">
+{% extends "base.html" %}
 
-</head>
-<body>
-    <h1>Welcome to HealthOracle</h1>
-</body>
-</html>
+{% block content %}
+    <div class="container">
+        <h2>HealthOracle Dashboard</h2>
+        <p>Your personalized health insights at a glance.</p>
+    </div>
+{% endblock %}
