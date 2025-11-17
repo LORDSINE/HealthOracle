@@ -10,5 +10,9 @@ def home():
 def diab():
     return render_template('diabetes.html')
 
+@app.route('/heart')
+def heart():
+    return render_template('heart.html')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
