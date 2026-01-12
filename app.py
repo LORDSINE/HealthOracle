@@ -1,8 +1,10 @@
 import os
 import random
 import smtplib
+import sqlite3
 import time
 from email.message import EmailMessage
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
@@ -15,21 +17,32 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
-# In-memory database (replace with real database in production)
-USERS = {
-    "patient123": {
-        "password": "password123",
-        "email": "patient123@example.com",
-        "name": "John Doe",
-        "phone": "+1234567890"
-    },
-    "patient456": {
-        "password": "password456",
-        "email": "patient456@example.com",
-        "name": "Jane Smith",
-        "phone": "+9876543210"
-    }
-}
+# Database configuration
+DATABASE = 'healthoracle.db'
+
+def get_db():
+    """Get database connection."""
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    """Initialize database with schema."""
+    conn = get_db()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            patient_id TEXT PRIMARY KEY,
+            password_hash TEXT NOT NULL,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Initialize database on startup
+init_db()
 
 # Store OTPs temporarily (in production, use Redis or similar)
 OTP_STORE = {}
@@ -80,7 +93,11 @@ def login():
         patient_id = request.form.get('patient_id', '').strip()
         password = request.form.get('password', '')
 
-        if patient_id in USERS and USERS[patient_id]['password'] == password:
+        conn = get_db()
+        user = conn.execute('SELECT * FROM users WHERE patient_id = ?', (patient_id,)).fetchone()
+        conn.close()
+
+        if user and check_password_hash(user['password_hash'], password):
             session['patient_id'] = patient_id
             return redirect(url_for('dashboard'))
 
@@ -123,7 +140,11 @@ def dashboard():
     if not patient_id:
         return redirect(url_for('login'))
 
-    patient_name = USERS.get(patient_id, {}).get('name', patient_id)
+    conn = get_db()
+    user = conn.execute('SELECT name FROM users WHERE patient_id = ?', (patient_id,)).fetchone()
+    conn.close()
+    
+    patient_name = user['name'] if user else patient_id
     return render_template('dashboard.html', patient_id=patient_id, patient_name=patient_name)
 
 
@@ -150,25 +171,30 @@ def forgot_password():
 
             if not email or not patient_id:
                 error = "Please enter both email and patient ID."
-            elif patient_id not in USERS:
-                error = "Patient ID not found."
-            elif USERS[patient_id].get('email') != email:
-                error = "Email doesn't match our records."
             else:
-                otp = str(random.randint(100000, 999999))
-                OTP_STORE[patient_id] = {
-                    'otp': otp,
-                    'email': email,
-                    'timestamp': time.time()
-                }
-                sent, send_error = send_email_otp(email, otp)
-                if sent:
-                    message = "OTP sent to your email. Please check your inbox (or spam)."
-                    if send_error == "demo":
-                        message += f" (Dev preview: {otp})"
-                    show_otp = True
+                conn = get_db()
+                user = conn.execute('SELECT email FROM users WHERE patient_id = ?', (patient_id,)).fetchone()
+                conn.close()
+                
+                if not user:
+                    error = "Patient ID not found."
+                elif user['email'] != email:
+                    error = "Email doesn't match our records."
                 else:
-                    error = f"Failed to send OTP: {send_error}"
+                    otp = str(random.randint(100000, 999999))
+                    OTP_STORE[patient_id] = {
+                        'otp': otp,
+                        'email': email,
+                        'timestamp': time.time()
+                    }
+                    sent, send_error = send_email_otp(email, otp)
+                    if sent:
+                        message = "OTP sent to your email. Please check your inbox (or spam)."
+                        if send_error == "demo":
+                            message += f" (Dev preview: {otp})"
+                        show_otp = True
+                    else:
+                        error = f"Failed to send OTP: {send_error}"
 
         elif action == 'verify_otp':
             email = request.form.get('email', '').strip()
@@ -195,7 +221,12 @@ def forgot_password():
                     error = "Passwords do not match."
                     show_otp = True
                 else:
-                    USERS[patient_id]['password'] = new_password
+                    # Update password in database
+                    password_hash = generate_password_hash(new_password)
+                    conn = get_db()
+                    conn.execute('UPDATE users SET password_hash = ? WHERE patient_id = ?', (password_hash, patient_id))
+                    conn.commit()
+                    conn.close()
                     del OTP_STORE[patient_id]
                     return redirect(url_for('login', message='Password reset successful! Please login with your new password.'))
             else:
@@ -222,17 +253,22 @@ def signup():
             error = "Password must be at least 8 characters."
         elif password != confirm:
             error = "Passwords do not match."
-        elif patient_id in USERS:
-            error = "Patient ID already exists."
         else:
-            USERS[patient_id] = {
-                'password': password,
-                'name': full_name,
-                'email': email,
-                'phone': phone or None
-            }
-            # Redirect to login page after successful signup
-            return redirect(url_for('login', message='Account created successfully! Please login.'))
+            conn = get_db()
+            existing = conn.execute('SELECT patient_id FROM users WHERE patient_id = ?', (patient_id,)).fetchone()
+            if existing:
+                error = "Patient ID already exists."
+                conn.close()
+            else:
+                password_hash = generate_password_hash(password)
+                conn.execute(
+                    'INSERT INTO users (patient_id, password_hash, name, email, phone) VALUES (?, ?, ?, ?, ?)',
+                    (patient_id, password_hash, full_name, email, phone or None)
+                )
+                conn.commit()
+                conn.close()
+                # Redirect to login page after successful signup
+                return redirect(url_for('login', message='Account created successfully! Please login.'))
 
     return render_template('signup.html', error=error)
 
