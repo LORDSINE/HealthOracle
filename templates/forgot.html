@@ -8,7 +8,7 @@
         <div class="pill-icon pill-icon--purple" aria-hidden="true">&#128274;</div>
         <div class="brand__text">
             <h1 class="brand__title">Reset Password</h1>
-            <p class="brand__eyebrow">Enter your phone number</p>
+            <p class="brand__eyebrow">Verify via email OTP</p>
         </div>
     </div>
 
@@ -25,21 +25,87 @@
         <div class="alert alert--info" role="status">{{ message }}</div>
         {% endif %}
 
+        {% if show_otp and "Dev preview" in message %}
+        <div class="alert alert--warning" role="alert" style="background: #fff3cd; border: 1px solid #ffc107;">
+            <strong>⚠️ Dev Mode:</strong> SMTP not configured. OTP shown below for testing only.
+            <div style="margin-top: 12px; padding: 12px; background: #f0f0f0; border-radius: 8px; font-family: monospace; font-size: 18px; text-align: center; letter-spacing: 2px;">
+                {{ message.split("OTP is ")[-1].split(")")[0] if "OTP is " in message else "Check console" }}
+            </div>
+            <p style="margin-top: 12px; font-size: 12px; color: #666;">Copy the 6-digit code above and paste it in the OTP field to continue. This is for development only.</p>
+        </div>
+        {% endif %}
+
+        {% if not show_otp %}
         <form class="form" method="POST" action="{{ url_for('forgot_password') }}" novalidate>
+            <input type="hidden" name="action" value="send_otp">
+            
             <label class="field">
-                <span class="field__label">Phone Number</span>
-                <input class="field__input" type="tel" name="phone" placeholder="Enter your phone number" value="{{ phone or '' }}" required>
-                <span class="helper-text">We'll send a verification code to this number</span>
+                <span class="field__label">Patient ID</span>
+                <input class="field__input" type="text" name="patient_id" placeholder="Enter your patient ID" required>
+            </label>
+            
+            <label class="field">
+                <span class="field__label">Email</span>
+                <input class="field__input" type="email" name="email" placeholder="Enter your registered email" value="{{ email or '' }}" required>
+                <span class="helper-text">We'll send a verification code to this email</span>
             </label>
 
             <button class="btn btn--accent" type="submit">Send Verification Code</button>
         </form>
+        {% else %}
+        <form class="form" method="POST" action="{{ url_for('forgot_password') }}" novalidate>
+            <input type="hidden" name="action" value="verify_otp">
+            <input type="hidden" name="patient_id" value="{{ request.form.get('patient_id', '') }}">
+            <input type="hidden" name="email" value="{{ email }}">
+            
+            <label class="field">
+                <span class="field__label">Enter OTP</span>
+                <input class="field__input" type="text" name="otp" placeholder="Enter 6-digit OTP" maxlength="6" required>
+                <span class="helper-text">Check your phone for the verification code</span>
+            </label>
+            
+            <label class="field">
+                <span class="field__label">New Password</span>
+                <div class="field__password">
+                    <input class="field__input password-input" type="password" name="new_password" placeholder="Create a new password" minlength="8" required>
+                    <span class="field__icon password-toggle" aria-hidden="true">&#128065;</span>
+                </div>
+                <span class="helper-text">Minimum 8 characters</span>
+            </label>
+            
+            <label class="field">
+                <span class="field__label">Confirm New Password</span>
+                <div class="field__password">
+                    <input class="field__input password-input" type="password" name="confirm_password" placeholder="Confirm your new password" minlength="8" required>
+                    <span class="field__icon password-toggle" aria-hidden="true">&#128065;</span>
+                </div>
+            </label>
+
+            <button class="btn btn--accent" type="submit">Reset Password</button>
+        </form>
+        {% endif %}
 
         <div class="text-center">
-            <a class="link" href="{{ url_for('home') }}">Back to Login</a>
+            <a class="link" href="{{ url_for('login') }}">Back to Login</a>
         </div>
     </div>
 
     <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
 </section>
+
+<script>
+    // Password toggle functionality
+    document.querySelectorAll('.password-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const passwordInput = this.closest('.field__password').querySelector('.password-input');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁';
+            }
+        });
+    });
+</script>
 {% endblock %}
