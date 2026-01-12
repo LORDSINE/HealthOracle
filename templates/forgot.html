@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Reset Password - Health Oracle{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="brand brand--center">
+        <div class="pill-icon pill-icon--purple" aria-hidden="true">&#128274;</div>
+        <div class="brand__text">
+            <h1 class="brand__title">Reset Password</h1>
+            <p class="brand__eyebrow">Enter your phone number</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <header class="card__header">
+            <h2>Forgot Password</h2>
+        </header>
+
+        {% if error %}
+        <div class="alert alert--error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if message %}
+        <div class="alert alert--info" role="status">{{ message }}</div>
+        {% endif %}
+
+        <form class="form" method="POST" action="{{ url_for('forgot_password') }}" novalidate>
+            <label class="field">
+                <span class="field__label">Phone Number</span>
+                <input class="field__input" type="tel" name="phone" placeholder="Enter your phone number" value="{{ phone or '' }}" required>
+                <span class="helper-text">We'll send a verification code to this number</span>
+            </label>
+
+            <button class="btn btn--accent" type="submit">Send Verification Code</button>
+        </form>
+
+        <div class="text-center">
+            <a class="link" href="{{ url_for('home') }}">Back to Login</a>
+        </div>
+    </div>
+
+    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+</section>
+{% endblock %}

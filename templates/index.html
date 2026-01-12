@@ -1,10 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %} Home - HealthOracle {% endblock %}
+{% block title %}Login - Health Oracle{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h2>HealthOracle Dashboard</h2>
-        <p>Your personalized health insights at a glance.</p>
+<section class="auth-shell">
+    <div class="brand">
+        <div class="brand__icon" aria-hidden="true"></div>
+        <div class="brand__text">
+            <p class="brand__eyebrow">Academic ML Research Project</p>
+            <h1 class="brand__title">Health Oracle</h1>
+        </div>
     </div>
+
+    <div class="card">
+        <header class="card__header">
+            <h2>Login</h2>
+        </header>
+
+        {% if error %}
+        <div class="alert alert--error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form class="form" method="POST" action="{{ url_for('home') }}" novalidate>
+            <label class="field">
+                <span class="field__label">Patient ID</span>
+                <input class="field__input" type="text" name="patient_id" placeholder="Enter your patient ID" required>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Password</span>
+                <div class="field__password">
+                    <input class="field__input" type="password" name="password" placeholder="Enter your password" required>
+                    <span class="field__icon" aria-hidden="true">&#128065;</span>
+                </div>
+                <a class="link link--subtle" href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+            </label>
+
+            <button class="btn btn--primary" type="submit">Login</button>
+
+            <div class="divider" role="separator">
+                <span>Or continue with</span>
+            </div>
+
+            <a class="btn btn--ghost" href="{{ url_for('google_link') }}">
+                <span class="btn__icon" aria-hidden="true">&#127760;</span>
+                <span>Sign in with Google</span>
+            </a>
+        </form>
+
+        <p class="footnote">Don't have an account? <a class="link" href="{{ url_for('signup') }}">Sign up</a></p>
+    </div>
+
+    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+</section>
 {% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Health Oracle{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="card card--wide">
+        <h2>Welcome, {{ patient_id }}.</h2>
+        <p class="muted">You are signed in. Use the navigation to explore your health predictions.</p>
+        <div class="cta-row">
+            <a class="btn btn--primary" href="{{ url_for('diab') }}">Go to Diabetes Model</a>
+            <a class="btn btn--ghost" href="{{ url_for('heart') }}">Go to Heart Model</a>
+        </div>
+        <p class="footnote">This demo uses mock credentials. Replace with real authentication before production use.</p>
+    </div>
+</section>
+{% endblock %}
