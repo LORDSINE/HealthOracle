@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Link Google Account - Health Oracle{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="brand brand--center">
+        <div class="pill-icon pill-icon--blue" aria-hidden="true">&#9889;</div>
+        <div class="brand__text">
+            <h1 class="brand__title">Link Google Account</h1>
+            <p class="brand__eyebrow">Connect your patient ID</p>
+        </div>
+    </div>
+
+    <div class="card">
+        {% if error %}
+        <div class="alert alert--error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form class="form" method="POST" action="{{ url_for('google_link') }}" novalidate>
+            <div class="info-block">
+                <span class="info-block__label">Signing in with:</span>
+                <div class="info-block__value">{{ email }}</div>
+            </div>
+
+            <label class="field">
+                <span class="field__label">Enter Your Patient ID</span>
+                <input class="field__input" type="text" name="patient_id" placeholder="e.g., P001234" required>
+                <span class="helper-text">Link your Google account with your patient ID to continue</span>
+            </label>
+
+            <div class="notice">
+                <div class="notice__title">First time with Google?</div>
+                <p class="notice__body">If you don't have a patient ID yet, please go back and sign up first to create your account.</p>
+            </div>
+
+            <button class="btn btn--primary" type="submit">Continue</button>
+        </form>
+
+        <div class="text-center">
+            <a class="link" href="{{ url_for('home') }}">Cancel &amp; Choose Different Account</a>
+        </div>
+    </div>
+
+    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+</section>
+{% endblock %}
