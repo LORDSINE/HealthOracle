@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Health Oracle{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="brand">
+        <div class="brand__icon" aria-hidden="true"></div>
+        <div class="brand__text">
+            <p class="brand__eyebrow">Academic ML Research Project</p>
+            <h1 class="brand__title">Health Oracle</h1>
+        </div>
+    </div>
+
+    <div class="card">
+        <header class="card__header">
+            <h2>Login</h2>
+        </header>
+
+        {% if error %}
+        <div class="alert alert--error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if message %}
+        <div class="alert alert--info" role="status" id="success-message">{{ message }}</div>
+        {% endif %}
+
+        <form class="form" method="POST" action="{{ url_for('login') }}" novalidate>
+            <label class="field">
+                <span class="field__label">Patient ID</span>
+                <input class="field__input" type="text" name="patient_id" placeholder="Enter your patient ID" required>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Password</span>
+                <div class="field__password">
+                    <input class="field__input password-input" type="password" name="password" placeholder="Enter your password" required>
+                    <span class="field__icon password-toggle" aria-hidden="true">&#128065;</span>
+                </div>
+                <a class="link link--subtle" href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+            </label>
+
+            <button class="btn btn--primary" type="submit">Login</button>
+
+            <div class="divider" role="separator">
+                <span>Or continue with</span>
+            </div>
+
+            <div id="g_id_signin" aria-label="Google Sign-In"></div>
+            <div class="helper-text" id="g_id_placeholder" style="display:none; text-align:center;">Configure GOOGLE_CLIENT_ID to enable Google Sign-In.</div>
+        </form>
+
+        <p class="footnote">Don't have an account? <a class="link" href="{{ url_for('signup') }}">Sign up</a></p>
+    </div>
+
+    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+</section>
+
+<script>
+    // Password toggle functionality
+    document.querySelectorAll('.password-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const passwordInput = this.closest('.field__password').querySelector('.password-input');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁';
+            }
+        });
+    });
+
+    // Google Identity Services setup
+    const googleClientId = "{{ google_client_id }}";
+    const placeholder = document.getElementById('g_id_placeholder');
+
+    function handleCredentialResponse(response) {
+        fetch("{{ url_for('auth_google') }}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ credential: response.credential })
+        }).then(r => r.json()).then(data => {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else if (data.error) {
+                alert(data.error);
+            }
+        }).catch(() => alert('Google sign-in failed.'));
+    }
+
+    function initGoogle() {
+        if (!googleClientId) {
+            placeholder.style.display = 'block';
+            return;
+        }
+        google.accounts.id.initialize({
+            client_id: googleClientId,
+            callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+            document.getElementById('g_id_signin'),
+            { theme: 'outline', size: 'large', width: '100%' }
+        );
+    }
+
+    // Auto-dismiss success message after 5 seconds
+    const successMsg = document.getElementById('success-message');
+    if (successMsg) {
+        setTimeout(() => {
+            successMsg.style.transition = 'opacity 0.3s';
+            successMsg.style.opacity = '0';
+            setTimeout(() => {
+                successMsg.remove();
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 300);
+        }, 5000);
+    }
+
+    window.addEventListener('load', initGoogle);
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+{% endblock %}

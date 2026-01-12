@@ -5,7 +5,10 @@
 {% block content %}
 <section class="dashboard">
     <div class="card card--wide">
-        <h2>Welcome, {{ patient_id }}.</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>Welcome, {{ patient_name or patient_id }}!</h2>
+            <a class="btn btn--ghost" href="{{ url_for('logout') }}" style="padding: 8px 16px;">Logout</a>
+        </div>
         <p class="muted">You are signed in. Use the navigation to explore your health predictions.</p>
         <div class="cta-row">
             <a class="btn btn--primary" href="{{ url_for('diab') }}">Go to Diabetes Model</a>
