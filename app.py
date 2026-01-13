@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+import pandas as pd
+import os
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
@@ -100,6 +102,69 @@ def diab():
 @app.route('/heart')
 def heart():
     return render_template('heart.html')
+
+@app.route('/datasets')
+def datasets():
+    patient_id = session.get('patient_id')
+    if not patient_id:
+        return redirect(url_for('home'))
+    
+    return render_template('datasets.html', patient_id=patient_id)
+
+@app.route('/dataset/<dataset_name>')
+def dataset_overview(dataset_name):
+    patient_id = session.get('patient_id')
+    if not patient_id:
+        return redirect(url_for('home'))
+    
+    data_path = os.path.join(os.path.dirname(__file__), 'data')
+    
+    if dataset_name == 'diabetes':
+        file_path = os.path.join(data_path, 'Diabetes_data.csv')
+        title = "Diabetes Dataset"
+        description = "Comprehensive health data for diabetes prediction and analysis."
+    elif dataset_name == 'heart':
+        file_path = os.path.join(data_path, 'heart_data.csv')
+        title = "Heart Disease Dataset"
+        description = "Clinical data for heart disease prediction and analysis."
+    else:
+        return redirect(url_for('datasets'))
+    
+    try:
+        df = pd.read_csv(file_path)
+        
+        # Get dataset statistics
+        stats = {
+            'total_rows': len(df),
+            'total_columns': len(df.columns),
+            'memory_usage': f"{df.memory_usage(deep=True).sum() / 1024:.2f} KB",
+        }
+        
+        # Get column information
+        columns_info = []
+        for col in df.columns:
+            columns_info.append({
+                'name': col,
+                'dtype': str(df[col].dtype),
+                'non_null': df[col].count(),
+                'null': df[col].isnull().sum(),
+                'unique': df[col].nunique()
+            })
+        
+        # Get first few rows for preview
+        preview_data = df.head(10).to_dict('records')
+        
+        return render_template('dataset_overview.html', 
+                             patient_id=patient_id,
+                             title=title,
+                             description=description,
+                             stats=stats,
+                             columns=columns_info,
+                             preview=preview_data,
+                             dataset_name=dataset_name)
+    except Exception as e:
+        return render_template('dataset_overview.html', 
+                             error=f"Error loading dataset: {str(e)}")
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
