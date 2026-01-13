@@ -1,20 +1,95 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard - Health Oracle{% endblock %}
-
-{% block content %}
-<section class="dashboard">
-    <div class="card card--wide">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2>Welcome, {{ patient_name or patient_id }}!</h2>
-            <a class="btn btn--ghost" href="{{ url_for('logout') }}" style="padding: 8px 16px;">Logout</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Health Oracle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>Health Oracle</h3>
+            <div class="subtitle">ML Project</div>
         </div>
-        <p class="muted">You are signed in. Use the navigation to explore your health predictions.</p>
-        <div class="cta-row">
-            <a class="btn btn--primary" href="{{ url_for('diab') }}">Go to Diabetes Model</a>
-            <a class="btn btn--ghost" href="{{ url_for('heart') }}">Go to Heart Model</a>
+        
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard') }}" class="nav-item active">
+                <span>⌂</span> Home
+            </a>
+            <a href="{{ url_for('dataset') }}" class="nav-item">
+                <span>☷</span> Dataset
+            </a>
+            <a href="#" class="nav-item">
+                <span>📊</span> EDA
+            </a>
+            <a href="#" class="nav-item">
+                <span>⚙</span> Modeling
+            </a>
+            <a href="{{ url_for('prediction') }}" class="nav-item">
+                <span>⚡</span> Prediction
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">{{ patient_name[0] if patient_name else 'U' }}</div>
+                <div class="user-details">
+                    <div class="user-name">{{ patient_name or 'User' }}</div>
+                    <div class="user-id">{{ patient_id }}</div>
+                </div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <span>↪</span> Logout
+            </a>
         </div>
-        <p class="footnote">This demo uses mock credentials. Replace with real authentication before production use.</p>
     </div>
-</section>
-{% endblock %}
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Health Oracle</h1>
+            <p>Early Risk Prediction for Heart Disease and Diabetes using Machine Learning</p>
+        </div>
+        
+        <div class="description">
+            <p>Health Oracle is an academic project that explores how machine learning models can assist in predicting the risk of heart disease and diabetes using health-related data.</p>
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('dataset') }}" class="btn btn-primary">
+                    <span>☷</span> Explore Dataset
+                </a>
+                <a href="{{ url_for('prediction') }}" class="btn btn-secondary">
+                    <span>⚡</span> View Prediction Flow
+                </a>
+            </div>
+        </div>
+        
+        <div class="info-cards">
+            <div class="info-card">
+                <h3>Dataset</h3>
+                <p>BRFSS public health survey data with 200,000+ records</p>
+            </div>
+            <div class="info-card">
+                <h3>Models</h3>
+                <p>SVM, Logistic Regression, Random Forest, XGBoost</p>
+            </div>
+            <div class="info-card">
+                <h3>Purpose</h3>
+                <p>Academic research and ML workflow demonstration</p>
+            </div>
+        </div>
+        
+        <div class="about-section">
+            <h2>About This Project</h2>
+            <p>This application demonstrates the complete machine learning workflow from data exploration to model deployment. It analyzes shared risk factors between heart disease and diabetes, allowing for joint analysis and prediction.</p>
+            <p>The project compares multiple classification algorithms and explores how lifestyle and health indicators can be used for early risk assessment.</p>
+        </div>
+        
+        <div class="disclaimer">
+            <strong>Disclaimer:</strong> This application is developed for academic and research purposes only. It does not replace professional medical advice.
+        </div>
+    </div>
+</body>
+</html>
