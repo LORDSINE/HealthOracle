@@ -3,17 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Health Oracle - Advanced ML Health Risk Assessment">
+    <meta name="author" content="Health Oracle Team">
     <title>{% block title %}Health Oracle{% endblock %}</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='logo.svg') }}">
+    
+    <!-- Additional Meta Tags -->
+    {% block meta %}{% endblock %}
 </head>
-<body class="page">
+<body class="page{% block body_class %}{% endblock %}">
     <div class="bg-gradient"></div>
-    <main class="content" role="main">
-        {% block content %}{% endblock %}
-    </main>
+    
+    <div class="page-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar__container">
+                <div class="navbar__brand">
+                    <a href="{{ url_for('dashboard') }}" class="navbar__logo">
+                        <span class="navbar__icon">⚕️</span>
+                        <span class="navbar__title">Health Oracle</span>
+                    </a>
+                </div>
+                <div class="navbar__menu">
+                    <a href="{{ url_for('dashboard') }}" class="navbar__link">Dashboard</a>
+                    <a href="{{ url_for('dataset_overview') }}" class="navbar__link">Dataset</a>
+                    <a href="{{ url_for('home') }}" class="navbar__link navbar__link--logout">Logout</a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="content" role="main">
+            {% block content %}
+            <!-- Default content area -->
+            {% endblock %}
+        </main>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer__container">
+                <div class="footer__content">
+                    <p class="footer__text">© 2026 Health Oracle. Academic Research Project.</p>
+                    <p class="footer__disclaimer">Not for clinical use. Data privacy protected.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Scripts -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

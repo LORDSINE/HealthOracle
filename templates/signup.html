@@ -2,74 +2,165 @@
 
 {% block title %}Sign Up - Health Oracle{% endblock %}
 
+{% block body_class %} auth-page signup-page{% endblock %}
+
 {% block content %}
 <section class="auth-shell auth-shell--wide">
+    <!-- Brand Section -->
     <div class="brand brand--center">
-        <div class="pill-icon pill-icon--green" aria-hidden="true">&#128100;</div>
+        <div class="brand__icon brand__icon--success" aria-hidden="true">👤</div>
         <div class="brand__text">
-            <h1 class="brand__title">Health Oracle</h1>
-            <p class="brand__eyebrow">Create Your Research Account</p>
+            <h1 class="brand__title">Create Account</h1>
+            <p class="brand__eyebrow">Join Health Oracle Research</p>
         </div>
     </div>
 
-    <div class="card">
+    <!-- Sign Up Card -->
+    <div class="card card--wide">
         <header class="card__header">
-            <h2>Sign Up</h2>
+            <h2>Sign Up for Health Oracle</h2>
+            <p class="card__subtitle">Create your research account in minutes</p>
         </header>
 
         {% if error %}
-        <div class="alert alert--error" role="alert">{{ error }}</div>
+        <div class="alert alert--error" role="alert">
+            <strong>⚠️ Registration Error:</strong> {{ error }}
+        </div>
         {% endif %}
 
         <form class="form" method="POST" action="{{ url_for('signup') }}" novalidate>
+            <!-- Patient ID Field -->
             <label class="field">
-                <span class="field__label">Patient ID</span>
-                <input class="field__input" type="text" name="patient_id" placeholder="e.g., P001234" required>
+                <span class="field__label">🆔 Patient ID</span>
+                <input class="field__input" type="text" name="patient_id" placeholder="e.g., P001234" required autocomplete="username">
                 <span class="helper-text">Unique identifier for research purposes</span>
             </label>
 
+            <!-- Full Name Field -->
             <label class="field">
-                <span class="field__label">Full Name</span>
-                <input class="field__input" type="text" name="full_name" placeholder="Enter your full name" required>
+                <span class="field__label">👤 Full Name</span>
+                <input class="field__input" type="text" name="full_name" placeholder="Enter your full name" required autocomplete="name">
             </label>
 
+            <!-- Email Field -->
             <label class="field">
-                <span class="field__label">Email Address</span>
-                <input class="field__input" type="email" name="email" placeholder="Enter your email" required>
+                <span class="field__label">📧 Email Address</span>
+                <input class="field__input" type="email" name="email" placeholder="Enter your email" required autocomplete="email">
             </label>
 
+            <!-- Password Field -->
             <label class="field">
-                <span class="field__label">Password</span>
+                <span class="field__label">🔒 Password</span>
                 <div class="field__password">
-                    <input class="field__input" type="password" name="password" placeholder="Create a password" minlength="8" required>
-                    <span class="field__icon" aria-hidden="true">&#128065;</span>
+                    <input class="field__input" id="password-signup" type="password" name="password" placeholder="Create a strong password" minlength="8" required autocomplete="new-password">
+                    <span class="field__icon" role="button" tabindex="0" onclick="togglePasswordField('password-signup')" onkeypress="if(event.key==='Enter') togglePasswordField('password-signup')" aria-label="Toggle password visibility">👁️</span>
                 </div>
                 <span class="helper-text">Minimum 8 characters</span>
             </label>
 
+            <!-- Confirm Password Field -->
             <label class="field">
-                <span class="field__label">Confirm Password</span>
+                <span class="field__label">🔒 Confirm Password</span>
                 <div class="field__password">
-                    <input class="field__input" type="password" name="confirm_password" placeholder="Confirm your password" minlength="8" required>
-                    <span class="field__icon" aria-hidden="true">&#128065;</span>
+                    <input class="field__input" id="password-confirm" type="password" name="confirm_password" placeholder="Confirm your password" minlength="8" required autocomplete="new-password">
+                    <span class="field__icon" role="button" tabindex="0" onclick="togglePasswordField('password-confirm')" onkeypress="if(event.key==='Enter') togglePasswordField('password-confirm')" aria-label="Toggle password visibility">👁️</span>
                 </div>
             </label>
 
-            <button class="btn btn--success" type="submit">Create Account</button>
+            <!-- Sign Up Button -->
+            <button class="btn btn--success" type="submit" style="width: 100%;">
+                <span>✓ Create Account</span>
+            </button>
 
+            <!-- Divider -->
             <div class="divider" role="separator">
                 <span>Or sign up with</span>
             </div>
 
-            <a class="btn btn--ghost" href="{{ url_for('google_link') }}">
-                <span class="btn__icon" aria-hidden="true">&#127760;</span>
+            <!-- Google Sign Up -->
+            <a class="btn btn--ghost" href="{{ url_for('google_link') }}" style="width: 100%;">
+                <span class="btn__icon" aria-hidden="true">🌐</span>
                 <span>Sign up with Google</span>
             </a>
         </form>
 
-        <p class="footnote">Already have an account? <a class="link" href="{{ url_for('home') }}">Login</a></p>
+        <!-- Terms & Login Link -->
+        <div class="form__footer">
+            <p class="footnote">
+                By signing up, you agree to our <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>
+            </p>
+            <p class="footnote">
+                Already have an account? <a class="link" href="{{ url_for('home') }}">Login here</a>
+            </p>
+        </div>
     </div>
 
-    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+    <!-- Disclaimer -->
+    <p class="disclaimer">
+        🔐 Academic Research Project · Not for Clinical Use · Your data is protected
+    </p>
 </section>
+
+<script>
+function togglePasswordField(fieldId) {
+    const input = document.getElementById(fieldId);
+    const icon = event.target;
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+    }
+}
+</script>
+
+<style>
+    .signup-page .content {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+    }
+
+    .auth-shell--wide {
+        width: min(480px, 100%);
+    }
+
+    .brand--center {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .brand__text {
+        display: grid;
+        gap: 4px;
+        justify-items: center;
+    }
+
+    .brand__icon--success {
+        background: linear-gradient(135deg, #34d399, #10b981) !important;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .card__subtitle {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 6px 0 0 0;
+    }
+
+    .form__footer {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .form__footer .footnote {
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .signup-page .card {
+        animation: slideUp 0.5s ease-out;
+    }
+</style>
 {% endblock %}

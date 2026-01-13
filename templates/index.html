@@ -2,55 +2,144 @@
 
 {% block title %}Login - Health Oracle{% endblock %}
 
+{% block body_class %} auth-page login-page{% endblock %}
+
 {% block content %}
 <section class="auth-shell">
-    <div class="brand">
+    <!-- Brand Section -->
+    <div class="brand brand--center">
         <div class="brand__icon" aria-hidden="true"></div>
         <div class="brand__text">
-            <p class="brand__eyebrow">Academic ML Research Project</p>
+            <p class="brand__eyebrow">🔬 Academic ML Research Project</p>
             <h1 class="brand__title">Health Oracle</h1>
+            <p class="brand__subtitle">Advanced Health Risk Assessment</p>
         </div>
     </div>
 
-    <div class="card">
+    <!-- Login Card -->
+    <div class="card card--wide">
         <header class="card__header">
-            <h2>Login</h2>
+            <h2>Login to Your Account</h2>
+            <p class="card__subtitle">Enter your credentials to continue</p>
         </header>
 
         {% if error %}
-        <div class="alert alert--error" role="alert">{{ error }}</div>
+        <div class="alert alert--error" role="alert">
+            <strong>Login Error:</strong> {{ error }}
+        </div>
         {% endif %}
 
         <form class="form" method="POST" action="{{ url_for('home') }}" novalidate>
+            <!-- Patient ID Field -->
             <label class="field">
                 <span class="field__label">Patient ID</span>
-                <input class="field__input" type="text" name="patient_id" placeholder="Enter your patient ID" required>
+                <input class="field__input" type="text" name="patient_id" placeholder="e.g., P12345" required autocomplete="username">
             </label>
 
+            <!-- Password Field -->
             <label class="field">
                 <span class="field__label">Password</span>
                 <div class="field__password">
-                    <input class="field__input" type="password" name="password" placeholder="Enter your password" required>
-                    <span class="field__icon" aria-hidden="true">&#128065;</span>
+                    <input class="field__input" id="password-input" type="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                    <span class="field__icon" role="button" tabindex="0" onclick="togglePassword()" onkeypress="if(event.key==='Enter') togglePassword()" aria-label="Toggle password visibility">👁️</span>
                 </div>
                 <a class="link link--subtle" href="{{ url_for('forgot_password') }}">Forgot Password?</a>
             </label>
 
-            <button class="btn btn--primary" type="submit">Login</button>
+            <!-- Login Button -->
+            <button class="btn btn--primary" type="submit" style="width: 100%;">
+                <span>🔓 Login</span>
+            </button>
 
+            <!-- Divider -->
             <div class="divider" role="separator">
                 <span>Or continue with</span>
             </div>
 
-            <a class="btn btn--ghost" href="{{ url_for('google_link') }}">
-                <span class="btn__icon" aria-hidden="true">&#127760;</span>
+            <!-- Google Sign In -->
+            <a class="btn btn--ghost" href="{{ url_for('google_link') }}" style="width: 100%;">
+                <span class="btn__icon" aria-hidden="true">🌐</span>
                 <span>Sign in with Google</span>
             </a>
         </form>
 
-        <p class="footnote">Don't have an account? <a class="link" href="{{ url_for('signup') }}">Sign up</a></p>
+        <!-- Sign Up Link -->
+        <p class="footnote" style="text-align: center; margin-top: 16px;">
+            Don't have an account? <a class="link" href="{{ url_for('signup') }}">Create one here</a>
+        </p>
     </div>
 
-    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+    <!-- Demo Credentials Info -->
+    <div class="demo-info">
+        <p class="demo-info__text">
+            <strong>👤 Demo Credentials:</strong> Use any Patient ID and password to login
+        </p>
+    </div>
+
+    <!-- Disclaimer -->
+    <p class="disclaimer">
+        🔐 Academic Research Project · Not for Clinical Use · Data Privacy Protected
+    </p>
 </section>
+
+<script>
+function togglePassword() {
+    const input = document.getElementById('password-input');
+    const icon = event.target;
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+    }
+}
+</script>
+
+<style>
+    .login-page .content {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+    }
+
+    .brand--center {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .brand__text {
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+    }
+
+    .brand__subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .card__subtitle {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 4px 0 0 0;
+    }
+
+    .demo-info {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        border: 2px solid #d1fae5;
+        border-radius: var(--radius);
+        padding: 16px;
+        text-align: center;
+        max-width: 420px;
+    }
+
+    .demo-info__text {
+        color: #065f46;
+        font-size: 13px;
+        font-weight: 500;
+        margin: 0;
+    }
+</style>
 {% endblock %}

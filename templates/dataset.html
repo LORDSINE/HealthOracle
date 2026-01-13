@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Health Oracle</title>
+    <link rel="stylesheet" href="../static/dataset.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>Health Oracle</h2>
+            <span>ML Project</span>
+        </div>
+
+        <nav class="menu">
+    <a class="active" href="#"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="#"><i class="fa-solid fa-database"></i> Dataset</a>
+    <a href="#"><i class="fa-solid fa-chart-line"></i> EDA</a>
+    <a href="#"><i class="fa-solid fa-brain"></i> Modeling</a>
+    <a href="#"><i class="fa-solid fa-magnifying-glass"></i> Prediction</a>
+</nav>
+
+        <div class="user">
+            <div class="avatar">👤</div>
+            <div>
+                <strong>Google User</strong>
+                <p>165</p>
+            </div>
+        </div>
+
+        <button class="logout">↩ Logout</button>
+    </aside>
+
+    <!-- Main -->
+    <main class="content">
+
+        <h1>Dataset Overview</h1>
+        <p class="subtitle">Understanding the data used for prediction</p>
+
+        <!-- Dataset Source -->
+        <div class="card blue">
+            <h3>Dataset Source</h3>
+            <div class="grid-2">
+                <div>
+                    <p>Source:</p>
+                    <p>Rows:</p>
+                    <p>Features:</p>
+                </div>
+                <div class="right">
+                    <strong>BRFSS / Public Health Survey Data</strong>
+                    <strong>~200,000+</strong>
+                    <strong>Health & Lifestyle Indicators</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="card">
+            <h3>Features</h3>
+            <div class="features">
+                <ul>
+                    <li>BMI</li>
+                    <li>Cholesterol</li>
+                    <li>Smoking</li>
+                    <li>Fruits Intake</li>
+                    <li>General Health</li>
+                </ul>
+                <ul>
+                    <li>High Blood Pressure</li>
+                    <li>Diabetes</li>
+                    <li>Physical Activity</li>
+                    <li>Vegetables Intake</li>
+                    <li>Mental Health</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Joint Analysis -->
+        <div class="alert">
+            <strong>ⓘ Joint Analysis</strong>
+            <p>
+                The dataset contains shared risk factors that are related to both heart disease and diabetes, allowing joint analysis.
+            </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <h2 class="blue-text">200K+</h2>
+                <p>Records</p>
+            </div>
+            <div class="stat">
+                <h2 class="green-text">10+</h2>
+                <p>Features</p>
+            </div>
+            <div class="stat">
+                <h2 class="purple-text">2</h2>
+                <p>Target Classes</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            Disclaimer: This application is developed for academic and research purposes only.
+            It does not replace professional medical advice.
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

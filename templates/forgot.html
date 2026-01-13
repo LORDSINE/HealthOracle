@@ -2,44 +2,131 @@
 
 {% block title %}Reset Password - Health Oracle{% endblock %}
 
+{% block body_class %} auth-page forgot-page{% endblock %}
+
 {% block content %}
 <section class="auth-shell">
+    <!-- Brand Section -->
     <div class="brand brand--center">
-        <div class="pill-icon pill-icon--purple" aria-hidden="true">&#128274;</div>
+        <div class="brand__icon brand__icon--accent" aria-hidden="true">🔐</div>
         <div class="brand__text">
             <h1 class="brand__title">Reset Password</h1>
-            <p class="brand__eyebrow">Enter your phone number</p>
+            <p class="brand__eyebrow">Recover your account access</p>
         </div>
     </div>
 
-    <div class="card">
+    <!-- Reset Password Card -->
+    <div class="card card--wide" style="max-width: 420px;">
         <header class="card__header">
-            <h2>Forgot Password</h2>
+            <h2>Password Recovery</h2>
+            <p class="card__subtitle">Enter your phone number to reset your password</p>
         </header>
 
         {% if error %}
-        <div class="alert alert--error" role="alert">{{ error }}</div>
+        <div class="alert alert--error" role="alert">
+            <strong>⚠️ Error:</strong> {{ error }}
+        </div>
         {% endif %}
 
         {% if message %}
-        <div class="alert alert--info" role="status">{{ message }}</div>
+        <div class="alert alert--info" role="status">
+            <strong>✓ Success:</strong> {{ message }}
+        </div>
         {% endif %}
 
         <form class="form" method="POST" action="{{ url_for('forgot_password') }}" novalidate>
             <label class="field">
-                <span class="field__label">Phone Number</span>
-                <input class="field__input" type="tel" name="phone" placeholder="Enter your phone number" value="{{ phone or '' }}" required>
+                <span class="field__label">📱 Phone Number</span>
+                <input class="field__input" type="tel" name="phone" placeholder="+1 (555) 000-0000" value="{{ phone or '' }}" required>
                 <span class="helper-text">We'll send a verification code to this number</span>
             </label>
 
-            <button class="btn btn--accent" type="submit">Send Verification Code</button>
+            <button class="btn btn--accent" type="submit" style="width: 100%;">
+                <span>📧 Send Verification Code</span>
+            </button>
         </form>
 
-        <div class="text-center">
-            <a class="link" href="{{ url_for('home') }}">Back to Login</a>
+        <!-- Back to Login Link -->
+        <div class="form__footer">
+            <a class="link" href="{{ url_for('home') }}" style="text-align: center; display: block;">← Back to Login</a>
         </div>
     </div>
 
-    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+    <!-- Additional Help -->
+    <div class="help-banner">
+        <p class="help-banner__text">
+            <strong>💡 Tip:</strong> Check your SMS inbox for the verification code
+        </p>
+    </div>
+
+    <!-- Disclaimer -->
+    <p class="disclaimer">
+        🔐 Academic Research Project · Not for Clinical Use · Your data is secure
+    </p>
 </section>
+
+<style>
+    .forgot-page .content {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+    }
+
+    .brand--center {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .brand__text {
+        display: grid;
+        gap: 4px;
+        justify-items: center;
+    }
+
+    .brand__icon--accent {
+        background: linear-gradient(135deg, #a855f7, #7c3aed) !important;
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    }
+
+    .card__subtitle {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 6px 0 0 0;
+    }
+
+    .form__footer {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .form__footer .link {
+        font-size: 14px;
+    }
+
+    .help-banner {
+        background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
+        border: 2px solid #c7d2fe;
+        border-radius: var(--radius);
+        padding: 16px;
+        text-align: center;
+        max-width: 420px;
+    }
+
+    .help-banner__text {
+        color: #4338ca;
+        font-size: 13px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .help-banner__text strong {
+        color: #4338ca;
+        font-weight: 700;
+    }
+
+    .forgot-page .card {
+        animation: slideUp 0.5s ease-out;
+    }
+</style>
 {% endblock %}

@@ -2,16 +2,80 @@
 
 {% block title %}Dashboard - Health Oracle{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+{% endblock %}
+
+{% block body_class %} dashboard-page{% endblock %}
+
 {% block content %}
 <section class="dashboard">
-    <div class="card card--wide">
-        <h2>Welcome, {{ patient_id }}.</h2>
-        <p class="muted">You are signed in. Use the navigation to explore your health predictions.</p>
-        <div class="cta-row">
-            <a class="btn btn--primary" href="{{ url_for('diab') }}">Go to Diabetes Model</a>
-            <a class="btn btn--ghost" href="{{ url_for('heart') }}">Go to Heart Model</a>
+    <!-- Welcome Header -->
+    <div class="dashboard__header">
+        <div class="welcome-section">
+            <div class="welcome-icon">👋</div>
+            <div class="welcome-content">
+                <h1 class="welcome-title">Welcome Back, {{ patient_id }}</h1>
+                <p class="welcome-subtitle">Access AI-powered health risk assessments for diabetes and heart disease</p>
+            </div>
         </div>
-        <p class="footnote">This demo uses mock credentials. Replace with real authentication before production use.</p>
+    </div>
+
+    <!-- Navigation Cards Grid -->
+    <div class="dashboard__cards">
+        <!-- Diabetes Risk Card -->
+        <a href="{{ url_for('diab') }}" class="model-card model-card--diabetes">
+            <div class="model-card__icon model-card__icon--purple">🧬</div>
+            <div class="model-card__content">
+                <h2 class="model-card__title">Diabetes Risk Assessment</h2>
+                <p class="model-card__description">Assess your diabetes risk based on health indicators and lifestyle factors</p>
+                <div class="model-card__cta">
+                    Launch Model <span class="cta-arrow">→</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Heart Disease Risk Card -->
+        <a href="{{ url_for('heart') }}" class="model-card model-card--heart">
+            <div class="model-card__icon model-card__icon--red">❤️</div>
+            <div class="model-card__content">
+                <h2 class="model-card__title">Heart Disease Risk Assessment</h2>
+                <p class="model-card__description">Evaluate your cardiovascular health risk with advanced ML algorithms</p>
+                <div class="model-card__cta">
+                    Launch Model <span class="cta-arrow">→</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Dataset Overview Card -->
+        <a href="{{ url_for('dataset_overview') }}" class="model-card model-card--dataset">
+            <div class="model-card__icon model-card__icon--blue">📊</div>
+            <div class="model-card__content">
+                <h2 class="model-card__title">Dataset Information</h2>
+                <p class="model-card__description">Explore the health data and features used in our ML models</p>
+                <div class="model-card__cta">
+                    View Details <span class="cta-arrow">→</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Information Banner -->
+    <div class="dashboard__info-banner">
+        <div class="info-icon">ℹ️</div>
+        <div class="info-content">
+            <h3 class="info-title">Getting Started</h3>
+            <p class="info-text">
+                This demo uses mock credentials for demonstration purposes. To use the prediction models, select either Diabetes Risk or Heart Disease Risk assessment. Your session is secure and data is not stored.
+            </p>
+        </div>
+    </div>
+
+    <!-- Disclaimer Banner -->
+    <div class="dashboard__disclaimer-banner">
+        <p class="disclaimer-text">
+            <strong>⚠️ Academic Research Project</strong> · Not for clinical diagnosis or treatment · Consult healthcare professionals for medical decisions
+        </p>
     </div>
 </section>
 {% endblock %}
