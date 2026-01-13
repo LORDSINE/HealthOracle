@@ -297,6 +297,32 @@ def google_link():
 
     return render_template('google_link.html', email=email, error=error)
 
+@app.route('/dataset')
+def dataset():
+    patient_id = session.get('patient_id')
+    if not patient_id:
+        return redirect(url_for('login'))
+    
+    conn = get_db()
+    user = conn.execute('SELECT name FROM users WHERE patient_id = ?', (patient_id,)).fetchone()
+    conn.close()
+    
+    patient_name = user['name'] if user else patient_id
+    return render_template('dataset.html', patient_id=patient_id, patient_name=patient_name)
+
+@app.route('/prediction')
+def prediction():
+    patient_id = session.get('patient_id')
+    if not patient_id:
+        return redirect(url_for('login'))
+    
+    conn = get_db()
+    user = conn.execute('SELECT name FROM users WHERE patient_id = ?', (patient_id,)).fetchone()
+    conn.close()
+    
+    patient_name = user['name'] if user else patient_id
+    return render_template('prediction.html', patient_id=patient_id, patient_name=patient_name)
+
 @app.route('/diabetes')
 def diab():
     return render_template('diabetes.html')
