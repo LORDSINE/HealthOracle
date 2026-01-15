@@ -469,6 +469,23 @@ body.page {
 
 .password-toggle {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    opacity: 0.7;
+}
+
+.password-toggle svg {
+    display: block;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.password-toggle:hover svg {
+    color: var(--primary);
 }
 
 .link {

@@ -1,40 +1,62 @@
 {% extends "base.html" %}
 
-{% block title %}Link Google Account - Health Oracle{% endblock %}
+{% block title %}Complete Google Sign Up - Health Oracle{% endblock %}
 
 {% block content %}
 <section class="auth-shell">
     <div class="brand brand--center">
         <div class="pill-icon pill-icon--blue" aria-hidden="true">&#9889;</div>
         <div class="brand__text">
-            <h1 class="brand__title">Link Google Account</h1>
-            <p class="brand__eyebrow">Connect your patient ID</p>
+            <h1 class="brand__title">Complete Sign Up</h1>
+            <p class="brand__eyebrow">Create your research account with Google</p>
         </div>
     </div>
 
     <div class="card">
+        <header class="card__header">
+            <h2>One More Step</h2>
+        </header>
+
         {% if error %}
         <div class="alert alert--error" role="alert">{{ error }}</div>
         {% endif %}
 
-        <form class="form" method="POST" action="{{ url_for('google_link') }}" novalidate>
-            <div class="info-block">
-                <span class="info-block__label">Signing in with:</span>
-                <div class="info-block__value">{{ email }}</div>
+        <form class="form" method="POST" action="{{ url_for('google_link') }}" id="googleLinkForm" novalidate>
+            <div style="background: #f0f8ff; border: 1px solid #007bff; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                <p style="margin: 0 0 8px 0; color: #666; font-size: 0.9rem;">Email from Google</p>
+                <div style="font-size: 1.2rem; font-weight: 500; color: #333;">{{ email }}</div>
             </div>
 
             <label class="field">
-                <span class="field__label">Enter Your Patient ID</span>
-                <input class="field__input" type="text" name="patient_id" placeholder="e.g., P001234" required>
-                <span class="helper-text">Link your Google account with your patient ID to continue</span>
+                <span class="field__label">Full Name</span>
+                <input class="field__input" type="text" name="full_name" placeholder="Enter your full name" required>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">Full name is required</span>
             </label>
 
-            <div class="notice">
-                <div class="notice__title">First time with Google?</div>
-                <p class="notice__body">If you don't have a patient ID yet, please go back and sign up first to create your account.</p>
+            <label class="field">
+                <span class="field__label">Phone Number (Optional)</span>
+                <div style="display: flex; gap: 8px;">
+                    <select name="country_code" class="field__input" style="width: 120px;">
+                        <option value="+977" selected>🇳🇵 +977</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+91">🇮🇳 +91</option>
+                        <option value="+86">🇨🇳 +86</option>
+                    </select>
+                    <input class="field__input" type="tel" name="phone" placeholder="9812345678" style="flex: 1;">
+                </div>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">Enter valid number</span>
+            </label>
+
+            <div class="notice" style="margin: 20px 0; padding: 15px; background: #e8f4f8; border-left: 4px solid #17a2b8; border-radius: 4px;">
+                <div style="font-weight: bold; color: #17a2b8; margin-bottom: 8px;">Your User ID</div>
+                <p style="margin: 0; font-size: 0.95rem; color: #333;">
+                    After you complete this form, you'll be assigned a unique User ID (like P0001, P0002, etc.). 
+                    You can use this User ID or your Google account to login anytime.
+                </p>
             </div>
 
-            <button class="btn btn--primary" type="submit">Continue</button>
+            <button class="btn btn--primary" type="submit">Create Account</button>
         </form>
 
         <div class="text-center">
@@ -44,4 +66,52 @@
 
     <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
 </section>
+
+<script>
+    // Form Validation
+    const googleLinkForm = document.getElementById('googleLinkForm');
+    if (googleLinkForm) {
+        googleLinkForm.addEventListener('submit', function(e) {
+            const fullName = document.querySelector('input[name="full_name"]');
+            const phone = document.querySelector('input[name="phone"]');
+            
+            // Hide all errors first
+            const errors = this.querySelectorAll('.validation-error');
+            errors.forEach(error => error.style.display = 'none');
+            
+            let isValid = true;
+            
+            // Full Name validation
+            if (!fullName.value.trim()) {
+                fullName.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Phone validation (optional but if provided must be valid)
+            if (phone.value.trim()) {
+                const phoneValue = phone.value.trim();
+                const countryCode = document.querySelector('select[name="country_code"]').value;
+                const digitsOnly = phoneValue.replace(/\D/g, '');
+                let phoneValid = false;
+                
+                if (countryCode === '+977') {
+                    // Nepal validation: must be 10 digits starting with 97 or 98
+                    phoneValid = digitsOnly.length === 10 && (digitsOnly.startsWith('97') || digitsOnly.startsWith('98'));
+                } else {
+                    // Other countries: basic 10+ digit validation
+                    phoneValid = digitsOnly.length >= 10;
+                }
+                
+                if (!phoneValid) {
+                    phone.closest('.field').querySelector('.validation-error').style.display = 'block';
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+</script>
 {% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Account Created - Health Oracle{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="brand brand--center">
+        <div class="pill-icon pill-icon--green" aria-hidden="true">✓</div>
+        <div class="brand__text">
+            <h1 class="brand__title">Account Created!</h1>
+            <p class="brand__eyebrow">Your research account is ready</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <header class="card__header">
+            <h2>Welcome, {{ name }}!</h2>
+        </header>
+
+        <div style="background: #f0f8ff; border: 2px solid #007bff; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0 0 10px 0; color: #666; font-size: 0.95rem;">Your User ID (Use this to login)</p>
+            <div style="font-size: 2.5rem; font-weight: bold; color: #007bff; font-family: 'Courier New', monospace; letter-spacing: 4px; margin: 15px 0;">
+                {{ user_id }}
+            </div>
+            <p style="margin: 10px 0 0 0; color: #666; font-size: 0.9rem;">
+                Save this ID - you'll need it to login with password
+            </p>
+        </div>
+
+        <div class="notice" style="margin: 20px 0; padding: 15px; background: #e8f4f8; border-left: 4px solid #17a2b8; border-radius: 4px;">
+            <div style="font-weight: bold; color: #17a2b8; margin-bottom: 8px;">Account Information</div>
+            <p style="margin: 5px 0; font-size: 0.95rem;">
+                <strong>Email:</strong> {{ email }}
+            </p>
+            <p style="margin: 5px 0; font-size: 0.95rem;">
+                <strong>User ID:</strong> {{ user_id }}
+            </p>
+        </div>
+
+        <div style="margin: 25px 0;">
+            <h3 style="font-size: 1.1rem; margin-top: 0;">What's Next?</h3>
+            <ul style="margin: 15px 0; padding-left: 25px; line-height: 1.8;">
+                <li>Save your User ID <strong>{{ user_id }}</strong></li>
+                <li>Click the button below to login with your credentials</li>
+                <li>Start exploring the Health Oracle dashboard</li>
+            </ul>
+        </div>
+
+        <a class="btn btn--primary" href="{{ url_for('login') }}" style="display: block; text-align: center; padding: 12px;">
+            Go to Login
+        </a>
+
+        <div class="text-center" style="margin-top: 15px;">
+            <a class="link" href="{{ url_for('login') }}">Already have an account? Login here</a>
+        </div>
+    </div>
+
+    <p class="disclaimer">Academic Research Project · Not for Clinical Use</p>
+</section>
+{% endblock %}

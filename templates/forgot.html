@@ -36,49 +36,72 @@
         {% endif %}
 
         {% if not show_otp %}
-        <form class="form" method="POST" action="{{ url_for('forgot_password') }}" novalidate>
+        <form class="form" method="POST" action="{{ url_for('forgot_password') }}" id="forgotForm" novalidate>
             <input type="hidden" name="action" value="send_otp">
             
             <label class="field">
-                <span class="field__label">Patient ID</span>
-                <input class="field__input" type="text" name="patient_id" placeholder="Enter your patient ID" required>
+                <span class="field__label">User ID</span>
+                <input class="field__input" type="text" name="user_id" placeholder="Enter your user ID (e.g., P0001)" value="{{ user_id or '' }}" required>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">User ID is required</span>
             </label>
             
             <label class="field">
                 <span class="field__label">Email</span>
                 <input class="field__input" type="email" name="email" placeholder="Enter your registered email" value="{{ email or '' }}" required>
                 <span class="helper-text">We'll send a verification code to this email</span>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">Please enter a valid email address</span>
             </label>
 
             <button class="btn btn--accent" type="submit">Send Verification Code</button>
         </form>
         {% else %}
-        <form class="form" method="POST" action="{{ url_for('forgot_password') }}" novalidate>
+        <form class="form" method="POST" action="{{ url_for('forgot_password') }}" id="otpForm" novalidate>
             <input type="hidden" name="action" value="verify_otp">
-            <input type="hidden" name="patient_id" value="{{ request.form.get('patient_id', '') }}">
+            <input type="hidden" name="user_id" value="{{ request.form.get('user_id', '') }}">
             <input type="hidden" name="email" value="{{ email }}">
             
             <label class="field">
                 <span class="field__label">Enter OTP</span>
                 <input class="field__input" type="text" name="otp" placeholder="Enter 6-digit OTP" maxlength="6" required>
-                <span class="helper-text">Check your phone for the verification code</span>
+                <span class="helper-text">Check your email for the verification code</span>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">OTP is required</span>
             </label>
             
             <label class="field">
                 <span class="field__label">New Password</span>
                 <div class="field__password">
-                    <input class="field__input password-input" type="password" name="new_password" placeholder="Create a new password" minlength="8" required>
-                    <span class="field__icon password-toggle" aria-hidden="true">&#128065;</span>
+                    <input class="field__input password-input" type="password" name="new_password" placeholder="Create a new password" minlength="8" required autocomplete="new-password">
+                    <span class="field__icon password-toggle" aria-hidden="true" role="button" tabindex="0" aria-label="Toggle password visibility">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </span>
                 </div>
                 <span class="helper-text">Minimum 8 characters</span>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">Password must be at least 8 characters</span>
             </label>
             
             <label class="field">
                 <span class="field__label">Confirm New Password</span>
                 <div class="field__password">
-                    <input class="field__input password-input" type="password" name="confirm_password" placeholder="Confirm your new password" minlength="8" required>
-                    <span class="field__icon password-toggle" aria-hidden="true">&#128065;</span>
+                    <input class="field__input password-input" type="password" name="confirm_password" placeholder="Confirm your new password" minlength="8" required autocomplete="new-password">
+                    <span class="field__icon password-toggle" aria-hidden="true" role="button" tabindex="0" aria-label="Toggle password visibility">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </span>
                 </div>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">Passwords do not match</span>
             </label>
 
             <button class="btn btn--accent" type="submit">Reset Password</button>
@@ -94,16 +117,84 @@
 </section>
 
 <script>
+    // Form Validation for initial forgot form
+    const forgotForm = document.getElementById('forgotForm');
+    if (forgotForm) {
+        forgotForm.addEventListener('submit', function(e) {
+            const userId = document.querySelector('input[name="user_id"]');
+            const email = document.querySelector('input[name="email"]');
+            
+            const errors = this.querySelectorAll('.validation-error');
+            errors.forEach(error => error.style.display = 'none');
+            
+            let isValid = true;
+            
+            if (!userId.value.trim()) {
+                userId.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim() || !emailRegex.test(email.value)) {
+                email.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+    
+    // Form Validation for OTP verification form
+    const otpForm = document.getElementById('otpForm');
+    if (otpForm) {
+        otpForm.addEventListener('submit', function(e) {
+            const otp = document.querySelector('input[name="otp"]');
+            const newPassword = document.querySelector('input[name="new_password"]');
+            const confirmPassword = document.querySelector('input[name="confirm_password"]');
+            
+            const errors = this.querySelectorAll('.validation-error');
+            errors.forEach(error => error.style.display = 'none');
+            
+            let isValid = true;
+            
+            if (!otp.value.trim()) {
+                otp.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!newPassword.value || newPassword.value.length < 8) {
+                newPassword.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!confirmPassword.value || newPassword.value !== confirmPassword.value) {
+                confirmPassword.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+
     // Password toggle functionality
     document.querySelectorAll('.password-toggle').forEach(toggle => {
         toggle.addEventListener('click', function() {
             const passwordInput = this.closest('.field__password').querySelector('.password-input');
+            const eyeIcon = this.querySelector('.eye-icon');
+            const eyeOffIcon = this.querySelector('.eye-off-icon');
+            
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                this.textContent = '🙈';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
             } else {
                 passwordInput.type = 'password';
-                this.textContent = '👁';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
             }
         });
     });

@@ -25,19 +25,30 @@
         <div class="alert alert--info" role="status" id="success-message">{{ message }}</div>
         {% endif %}
 
-        <form class="form" method="POST" action="{{ url_for('login') }}" novalidate>
+        <form class="form" method="POST" action="{{ url_for('login') }}" id="loginForm" novalidate>
             <label class="field">
-                <span class="field__label">Patient ID</span>
-                <input class="field__input" type="text" name="patient_id" placeholder="Enter your patient ID" required>
+                <span class="field__label">User ID</span>
+                <input class="field__input" type="text" name="user_id" placeholder="Enter your user ID (e.g., P0001)" required>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">User ID is required</span>
             </label>
 
             <label class="field">
                 <span class="field__label">Password</span>
                 <div class="field__password">
-                    <input class="field__input password-input" type="password" name="password" placeholder="Enter your password" required>
-                    <span class="field__icon password-toggle" aria-hidden="true">&#128065;</span>
+                    <input class="field__input password-input" type="password" name="password" placeholder="Enter your password" required autocomplete="off">
+                    <span class="field__icon password-toggle" aria-hidden="true" role="button" tabindex="0" aria-label="Toggle password visibility">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </span>
                 </div>
                 <a class="link link--subtle" href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+                <span class="validation-error" style="display:none; color: red; font-size: 0.875rem;">Password is required</span>
             </label>
 
             <button class="btn btn--primary" type="submit">Login</button>
@@ -57,16 +68,50 @@
 </section>
 
 <script>
+    // Form Validation
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            const userId = document.querySelector('input[name="user_id"]');
+            const password = document.querySelector('input[name="password"]');
+            const errors = this.querySelectorAll('.validation-error');
+            
+            // Hide all errors first
+            errors.forEach(error => error.style.display = 'none');
+            
+            let isValid = true;
+            
+            if (!userId.value.trim()) {
+                userId.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!password.value.trim()) {
+                password.closest('.field').querySelector('.validation-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    }
+
     // Password toggle functionality
     document.querySelectorAll('.password-toggle').forEach(toggle => {
         toggle.addEventListener('click', function() {
             const passwordInput = this.closest('.field__password').querySelector('.password-input');
+            const eyeIcon = this.querySelector('.eye-icon');
+            const eyeOffIcon = this.querySelector('.eye-off-icon');
+            
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                this.textContent = '🙈';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
             } else {
                 passwordInput.type = 'password';
-                this.textContent = '👁';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
             }
         });
     });
