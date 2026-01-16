@@ -40,13 +40,15 @@
         </nav>
         
         <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">{% block user_avatar %}U{% endblock %}</div>
-                <div class="user-details">
-                    <div class="user-name">{% block user_name %}User{% endblock %}</div>
-                    <div class="user-id">{% block user_id %}{% endblock %}</div>
+            <a href="{{ url_for('profile') }}" class="user-info-link">
+                <div class="user-info">
+                    <div class="user-avatar">{% block user_avatar %}U{% endblock %}</div>
+                    <div class="user-details">
+                        <div class="user-name">{% block user_name %}User{% endblock %}</div>
+                        <div class="user-id">{% block user_id %}{% endblock %}</div>
+                    </div>
                 </div>
-            </div>
+            </a>
             <a href="{{ url_for('logout') }}" class="logout-btn">
                 <span>↪</span> Logout
             </a>

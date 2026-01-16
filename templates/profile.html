@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile - Health Oracle{% endblock %}
+
+{% block page_class %}dashboard-layout{% endblock %}
+
+{% block user_avatar %}{{ user_name[0] if user_name else 'U' }}{% endblock %}
+{% block user_name %}{{ user_name or 'User' }}{% endblock %}
+{% block user_id %}{{ user_id }}{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>User Profile</h1>
+        <p>Manage your account information and settings</p>
+    </div>
+
+    <div class="profile-card">
+        <h2>Personal Information</h2>
+        
+        <div class="profile-section">
+            <div class="profile-field">
+                <label>Full Name</label>
+                <div class="field-value">{{ user_name }}</div>
+            </div>
+            
+            <div class="profile-field">
+                <label>Email Address</label>
+                <div class="field-value">{{ user_email }}</div>
+            </div>
+            
+            <div class="profile-field">
+                <label>User ID</label>
+                <div class="field-value" style="font-family: monospace; font-weight: 600;">{{ user_id }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <h2>Account Settings</h2>
+        
+        <button class="btn-settings" onclick="togglePasswordForm()">
+            <span>🔐</span> Change Password
+        </button>
+        
+        <div id="password-form" class="password-form" style="display: none; margin-top: 1.5rem;">
+            <form method="POST" action="{{ url_for('profile') }}" id="changePasswordForm">
+                <label class="field">
+                    <span class="field__label">Current Password</span>
+                    <input class="field__input" type="password" name="current_password" placeholder="Enter your current password" required>
+                </label>
+
+                <label class="field">
+                    <span class="field__label">New Password</span>
+                    <input class="field__input" type="password" name="new_password" placeholder="Enter new password" required>
+                </label>
+
+                <label class="field">
+                    <span class="field__label">Confirm New Password</span>
+                    <input class="field__input" type="password" name="confirm_password" placeholder="Confirm new password" required>
+                </label>
+
+                {% if password_error %}
+                <div class="alert alert--error" role="alert">{{ password_error }}</div>
+                {% endif %}
+
+                {% if password_success %}
+                <div class="alert alert--success" role="status">{{ password_success }}</div>
+                {% endif %}
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Update Password</button>
+                    <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="togglePasswordForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <h2>Danger Zone</h2>
+        <p style="color: #666; margin-bottom: 1.5rem;">These actions cannot be undone</p>
+        
+        <button class="btn-danger" onclick="if(confirm('Are you sure you want to logout?')) { window.location.href='{{ url_for('logout') }}'; }">
+            <span>↪</span> Logout
+        </button>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.profile-header p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.profile-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+}
+
+.profile-card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profile-field label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.field-value {
+    font-size: 1rem;
+    color: #333;
+    padding: 0.75rem;
+    background: #f5f5f5;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.btn-settings {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-settings:hover {
+    background: #1565c0;
+}
+
+.btn-danger {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-danger:hover {
+    background: #b71c1c;
+}
+
+.password-form {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 1.5rem;
+}
+
+.alert--success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.field {
+    display: grid;
+    gap: 8px;
+    text-align: left;
+}
+
+.field__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+}
+
+.field__input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field__input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.12);
+}
+</style>
+
+<script>
+    function togglePasswordForm() {
+        const form = document.getElementById('password-form');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+{% endblock %}

@@ -201,6 +201,56 @@ def dashboard():
     return render_template('dashboard.html', user_id=user_id, user_name=user_name)
 
 
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+
+    conn = get_db()
+    user = conn.execute('SELECT name, email FROM users WHERE user_id = ?', (user_id,)).fetchone()
+    conn.close()
+    
+    if not user:
+        return redirect(url_for('login'))
+    
+    user_name = user['name']
+    user_email = user['email']
+    password_error = None
+    password_success = None
+
+    if request.method == 'POST':
+        current_password = request.form.get('current_password', '').strip()
+        new_password = request.form.get('new_password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+
+        if not all([current_password, new_password, confirm_password]):
+            password_error = 'All fields are required'
+        elif new_password != confirm_password:
+            password_error = 'New passwords do not match'
+        elif len(new_password) < 8:
+            password_error = 'Password must be at least 8 characters long'
+        else:
+            # Verify current password
+            conn = get_db()
+            user_db = conn.execute('SELECT password_hash FROM users WHERE user_id = ?', (user_id,)).fetchone()
+            conn.close()
+            
+            if not user_db or not check_password_hash(user_db['password_hash'], current_password):
+                password_error = 'Current password is incorrect'
+            else:
+                # Update password
+                new_hash = generate_password_hash(new_password)
+                conn = get_db()
+                conn.execute('UPDATE users SET password_hash = ? WHERE user_id = ?', (new_hash, user_id))
+                conn.commit()
+                conn.close()
+                password_success = 'Password updated successfully!'
+
+    return render_template('profile.html', user_id=user_id, user_name=user_name, user_email=user_email,
+                         password_error=password_error, password_success=password_success)
+
+
 @app.route('/logout')
 def logout():
     session.clear()
