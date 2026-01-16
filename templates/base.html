@@ -16,10 +16,13 @@
     {% block sidebar %}
     <!-- Sticky Sidebar -->
     <aside class="sidebar sticky-sidebar">
-        <div class="sidebar-header">
-            <h3>Health Oracle</h3>
-            <div class="subtitle">ML Project</div>
-        </div>
+        <a href="{{ url_for('dashboard') }}" class="sidebar-header-link">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='logo.ico') }}" alt="Health Oracle Logo" class="sidebar-logo">
+                <h3>Health Oracle</h3>
+                <div class="subtitle">ML Project</div>
+            </div>
+        </a>
         
         <nav class="sidebar-nav">
             <a href="{{ url_for('dashboard') }}" class="nav-item {% block nav_home %}{% endblock %}">
