@@ -6,9 +6,9 @@
 
 {% block nav_dataset %}active{% endblock %}
 
-{% block user_avatar %}{{ patient_name[0] if patient_name else 'U' }}{% endblock %}
-{% block user_name %}{{ patient_name or 'User' }}{% endblock %}
-{% block user_id %}{{ patient_id }}{% endblock %}
+{% block user_avatar %}{{ user_name[0] if user_name else 'U' }}{% endblock %}
+{% block user_name %}{{ user_name or 'User' }}{% endblock %}
+{% block user_id %}{{ user_id }}{% endblock %}
 
 {% block content %}
 <div class="page-header">
