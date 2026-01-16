@@ -1,125 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Health Oracle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body class="dashboard-layout">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h3>Health Oracle</h3>
-            <div class="subtitle">ML Project</div>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <a href="{{ url_for('dashboard') }}" class="nav-item active">
-                <span>⌂</span> Home
-            </a>
-            <a href="{{ url_for('dataset') }}" class="nav-item">
-                <span>☷</span> Dataset
-            </a>
-            <a href="#" class="nav-item">
-                <span>📊</span> EDA
-            </a>
-            <a href="#" class="nav-item">
-                <span>⚙</span> Modeling
-            </a>
-            <a href="{{ url_for('prediction') }}" class="nav-item">
-                <span>⚡</span> Prediction
-            </a>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <div class="user-info">
-                    <div class="user-avatar">{{ user_name[0] if user_name else 'U' }}</div>
-                    <div class="user-details">
-                        <div class="user-name">{{ user_name or 'User' }}</div>
-                        <div class="user-id" style="font-size: 0.75rem; color: #888; margin-top: 4px;">{{ user_id }}</div>
-                    </div>
-                </div>
-            <a href="{{ url_for('logout') }}" class="logout-btn">
-                <span>↪</span> Logout
-            </a>
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Health Oracle{% endblock %}
+
+{% block page_class %}dashboard-layout{% endblock %}
+
+{% block nav_home %}active{% endblock %}
+
+{% block user_avatar %}{{ user_name[0] if user_name else 'U' }}{% endblock %}
+{% block user_name %}{{ user_name or 'User' }}{% endblock %}
+{% block user_id %}{{ user_id }}{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Health Oracle</h1>
+    <p>Early Risk Prediction for Heart Disease and Diabetes using Machine Learning</p>
+
+    <!-- User Info Section -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 20px; margin-bottom: 20px; color: white;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0 0 5px 0; font-size: 1.5rem;">Welcome, {{ user_name }}!</h2>
+                <p style="margin: 0; opacity: 0.9;">Your User ID: <strong style="font-family: monospace; font-size: 1.1rem;">{{ user_id }}</strong></p>
+            </div>
+            <button onclick="copyUserID('{{ user_id }}')" style="background: white; color: #667eea; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">
+                Copy User ID
+            </button>
         </div>
     </div>
+</div>
+
+<div class="description">
+    <p>Health Oracle is an academic project that explores how machine learning models can assist in predicting the risk of heart disease and diabetes using health-related data.</p>
     
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <h1>Health Oracle</h1>
-            <p>Early Risk Prediction for Heart Disease and Diabetes using Machine Learning</p>
-        
-                <!-- User Info Section -->
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 20px; margin-bottom: 20px; color: white;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h2 style="margin: 0 0 5px 0; font-size: 1.5rem;">Welcome, {{ user_name }}!</h2>
-                            <p style="margin: 0; opacity: 0.9;">Your User ID: <strong style="font-family: monospace; font-size: 1.1rem;">{{ user_id }}</strong></p>
-                        </div>
-                        <button onclick="copyUserID('{{ user_id }}')" style="background: white; color: #667eea; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">
-                            Copy User ID
-                        </button>
-                    </div>
-                </div>
-        </div>
-        
-        <div class="description">
-            <p>Health Oracle is an academic project that explores how machine learning models can assist in predicting the risk of heart disease and diabetes using health-related data.</p>
-            
-            <div class="action-buttons">
-                <a href="{{ url_for('dataset') }}" class="btn btn-primary">
-                    <span>☷</span> Explore Dataset
-                </a>
-                <a href="{{ url_for('prediction') }}" class="btn btn-secondary">
-                    <span>⚡</span> View Prediction Flow
-                </a>
-            </div>
-        </div>
-        
-        <div class="info-cards">
-            <div class="info-card">
-                <h3>Dataset</h3>
-                <p>BRFSS public health survey data with 200,000+ records</p>
-            </div>
-            <div class="info-card">
-                <h3>Models</h3>
-                <p>SVM, Logistic Regression, Random Forest</p>
-            </div>
-            <div class="info-card">
-                <h3>Purpose</h3>
-                <p>Academic research and ML workflow demonstration</p>
-            </div>
-        </div>
-        
-        <div class="about-section">
-            <h2>About This Project</h2>
-            <p>This application demonstrates the complete machine learning workflow from data exploration to model deployment. It analyzes shared risk factors between heart disease and diabetes, allowing for joint analysis and prediction.</p>
-            <p>The project compares multiple classification algorithms and explores how lifestyle and health indicators can be used for early risk assessment.</p>
-        </div>
-        
-        <div class="disclaimer">
-            <strong>Disclaimer:</strong> This application is developed for academic and research purposes only. It does not replace professional medical advice.
-        
-                <script>
-                    function copyUserID(userID) {
-                        navigator.clipboard.writeText(userID).then(() => {
-                            const btn = event.target;
-                            const originalText = btn.textContent;
-                            btn.textContent = 'Copied!';
-                            btn.style.background = '#4CAF50';
-                            setTimeout(() => {
-                                btn.textContent = originalText;
-                                btn.style.background = 'white';
-                            }, 2000);
-                        }).catch(() => {
-                            alert('Failed to copy User ID');
-                        });
-                    }
-                </script>
-        </div>
+    <div class="action-buttons">
+        <a href="{{ url_for('dataset') }}" class="btn btn-primary">
+            <span>☷</span> Explore Dataset
+        </a>
+        <a href="{{ url_for('prediction') }}" class="btn btn-secondary">
+            <span>⚡</span> View Prediction Flow
+        </a>
     </div>
-</body>
-</html>
+</div>
+
+<div class="info-cards">
+    <div class="info-card">
+        <h3>Dataset</h3>
+        <p>BRFSS public health survey data with 200,000+ records</p>
+    </div>
+    <div class="info-card">
+        <h3>Models</h3>
+        <p>SVM, Logistic Regression, Random Forest</p>
+    </div>
+    <div class="info-card">
+        <h3>Purpose</h3>
+        <p>Academic research and ML workflow demonstration</p>
+    </div>
+</div>
+
+<div class="about-section">
+    <h2>About This Project</h2>
+    <p>This application demonstrates the complete machine learning workflow from data exploration to model deployment. It analyzes shared risk factors between heart disease and diabetes, allowing for joint analysis and prediction.</p>
+    <p>The project compares multiple classification algorithms and explores how lifestyle and health indicators can be used for early risk assessment.</p>
+</div>
+
+<div class="disclaimer">
+    <strong>Disclaimer:</strong> This application is developed for academic and research purposes only. It does not replace professional medical advice.
+</div>
+
+<script>
+    function copyUserID(userID) {
+        navigator.clipboard.writeText(userID).then(() => {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.style.background = '#4CAF50';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'white';
+            }, 2000);
+        }).catch(() => {
+            alert('Failed to copy User ID');
+        });
+    }
+</script>
+{% endblock %}

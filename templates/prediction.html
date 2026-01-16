@@ -1,79 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction - Health Oracle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body class="dashboard-layout">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h3>Health Oracle</h3>
-            <div class="subtitle">ML Project</div>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <a href="{{ url_for('dashboard') }}" class="nav-item">
-                <span>⌂</span> Home
-            </a>
-            <a href="{{ url_for('dataset') }}" class="nav-item">
-                <span>☷</span> Dataset
-            </a>
-            <a href="#" class="nav-item">
-                <span>📊</span> EDA
-            </a>
-            <a href="#" class="nav-item">
-                <span>⚙</span> Modeling
-            </a>
-            <a href="{{ url_for('prediction') }}" class="nav-item active">
-                <span>⚡</span> Prediction
-            </a>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">{{ patient_name[0] if patient_name else 'U' }}</div>
-                <div class="user-details">
-                    <div class="user-name">{{ patient_name or 'User' }}</div>
-                    <div class="user-id">{{ patient_id }}</div>
-                </div>
-            </div>
-            <a href="{{ url_for('logout') }}" class="logout-btn">
-                <span>↪</span> Logout
-            </a>
-        </div>
-    </div>
+{% extends "base.html" %}
+
+{% block title %}Prediction - Health Oracle{% endblock %}
+
+{% block page_class %}dashboard-layout{% endblock %}
+
+{% block nav_prediction %}active{% endblock %}
+
+{% block user_avatar %}{{ patient_name[0] if patient_name else 'U' }}{% endblock %}
+{% block user_name %}{{ patient_name or 'User' }}{% endblock %}
+{% block user_id %}{{ patient_id }}{% endblock %}
+
+{% block content %}
+<div class="content-card" style="margin-bottom: 2rem;">
+    <h2 style="margin-bottom: 0.5rem;">Health Risk Assessment</h2>
+    <p style="color: #666; margin-bottom: 0.5rem;">Interactive prediction using ML model simulation</p>
+    <p style="color: #999; font-size: 0.85rem;">Last Updated: 1/13/2026</p>
+</div>
+
+<div class="content-card">
+    <h2 style="margin-bottom: 1.5rem;">Select a Prediction Model</h2>
+    <p style="margin-bottom: 2rem; color: #666;">Choose a model below to make health risk predictions</p>
     
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="content-card" style="margin-bottom: 2rem;">
-            <h2 style="margin-bottom: 0.5rem;">Health Risk Assessment</h2>
-            <p style="color: #666; margin-bottom: 0.5rem;">Interactive prediction using ML model simulation</p>
-            <p style="color: #999; font-size: 0.85rem;">Last Updated: 1/13/2026</p>
-        </div>
-        
-        <div class="content-card">
-            <h2 style="margin-bottom: 1.5rem;">Select a Prediction Model</h2>
-            <p style="margin-bottom: 2rem; color: #666;">Choose a model below to make health risk predictions</p>
-            
-            <div style="display: grid; gap: 1.5rem;">
-                <a href="{{ url_for('diab') }}" style="text-decoration: none; color: inherit;">
-                    <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; cursor: pointer;">
-                        <h3 style="color: #1976d2; margin-bottom: 0.75rem;">🩺 Diabetes Prediction</h3>
-                        <p style="color: #666; margin: 0;">Predict diabetes risk based on health indicators and lifestyle factors</p>
-                    </div>
-                </a>
-                
-                <a href="{{ url_for('heart') }}" style="text-decoration: none; color: inherit;">
-                    <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; cursor: pointer;">
-                        <h3 style="color: #d32f2f; margin-bottom: 0.75rem;">❤️ Heart Disease Prediction</h3>
-                        <p style="color: #666; margin: 0;">Assess heart disease risk using cardiovascular health metrics</p>
-                    </div>
-                </a>
+    <div style="display: grid; gap: 1.5rem;">
+        <a href="{{ url_for('diab') }}" style="text-decoration: none; color: inherit;">
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; cursor: pointer;">
+                <h3 style="color: #1976d2; margin-bottom: 0.75rem;">🩺 Diabetes Prediction</h3>
+                <p style="color: #666; margin: 0;">Predict diabetes risk based on health indicators and lifestyle factors</p>
             </div>
-        </div>
+        </a>
+        
+        <a href="{{ url_for('heart') }}" style="text-decoration: none; color: inherit;">
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; cursor: pointer;">
+                <h3 style="color: #d32f2f; margin-bottom: 0.75rem;">❤️ Heart Disease Prediction</h3>
+                <p style="color: #666; margin: 0;">Assess heart disease risk using cardiovascular health metrics</p>
+            </div>
+        </a>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

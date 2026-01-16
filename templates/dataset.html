@@ -1,150 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dataset - Health Oracle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body class="dashboard-layout">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h3>Health Oracle</h3>
-            <div class="subtitle">ML Project</div>
+{% extends "base.html" %}
+
+{% block title %}Dataset - Health Oracle{% endblock %}
+
+{% block page_class %}dashboard-layout{% endblock %}
+
+{% block nav_dataset %}active{% endblock %}
+
+{% block user_avatar %}{{ patient_name[0] if patient_name else 'U' }}{% endblock %}
+{% block user_name %}{{ patient_name or 'User' }}{% endblock %}
+{% block user_id %}{{ patient_id }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Dataset Overview</h1>
+    <p>Understanding the data used for prediction</p>
+</div>
+
+<div class="content-card" style="margin-bottom: 1.5rem;">
+    <h2 style="margin-bottom: 1.5rem;">Dataset Source</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 0.75rem 0; color: #666;">Source:</td>
+            <td style="padding: 0.75rem 0; text-align: right; font-weight: 500;">BRFSS / Public Health Survey Data</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 0.75rem 0; color: #666;">Rows:</td>
+            <td style="padding: 0.75rem 0; text-align: right; font-weight: 500;">~200,000+</td>
+        </tr>
+        <tr>
+            <td style="padding: 0.75rem 0; color: #666;">Features:</td>
+            <td style="padding: 0.75rem 0; text-align: right; font-weight: 500;">Health & Lifestyle Indicators</td>
+        </tr>
+    </table>
+</div>
+
+<div class="content-card" style="margin-bottom: 1.5rem;">
+    <h2 style="margin-bottom: 1.5rem;">Features</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 3rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>BMI</span>
         </div>
-        
-        <nav class="sidebar-nav">
-            <a href="{{ url_for('dashboard') }}" class="nav-item">
-                <span>⌂</span> Home
-            </a>
-            <a href="{{ url_for('dataset') }}" class="nav-item active">
-                <span>☷</span> Dataset
-            </a>
-            <a href="#" class="nav-item">
-                <span>📊</span> EDA
-            </a>
-            <a href="#" class="nav-item">
-                <span>⚙</span> Modeling
-            </a>
-            <a href="{{ url_for('prediction') }}" class="nav-item">
-                <span>⚡</span> Prediction
-            </a>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">{{ patient_name[0] if patient_name else 'U' }}</div>
-                <div class="user-details">
-                    <div class="user-name">{{ patient_name or 'User' }}</div>
-                    <div class="user-id">{{ patient_id }}</div>
-                </div>
-            </div>
-            <a href="{{ url_for('logout') }}" class="logout-btn">
-                <span>↪</span> Logout
-            </a>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>High Blood Pressure</span>
         </div>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="page-header">
-            <h1>Dataset Overview</h1>
-            <p>Understanding the data used for prediction</p>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>Cholesterol</span>
         </div>
-        
-        <div class="content-card" style="margin-bottom: 1.5rem;">
-            <h2 style="margin-bottom: 1.5rem;">Dataset Source</h2>
-            <table style="width: 100%; border-collapse: collapse;">
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 0.75rem 0; color: #666;">Source:</td>
-                    <td style="padding: 0.75rem 0; text-align: right; font-weight: 500;">BRFSS / Public Health Survey Data</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 0.75rem 0; color: #666;">Rows:</td>
-                    <td style="padding: 0.75rem 0; text-align: right; font-weight: 500;">~200,000+</td>
-                </tr>
-                <tr>
-                    <td style="padding: 0.75rem 0; color: #666;">Features:</td>
-                    <td style="padding: 0.75rem 0; text-align: right; font-weight: 500;">Health & Lifestyle Indicators</td>
-                </tr>
-            </table>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>Diabetes</span>
         </div>
-        
-        <div class="content-card" style="margin-bottom: 1.5rem;">
-            <h2 style="margin-bottom: 1.5rem;">Features</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 3rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>BMI</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>High Blood Pressure</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>Cholesterol</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>Diabetes</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>Smoking</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>Physical Activity</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>Fruits Intake</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>Vegetables Intake</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>General Health</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #1976d2;">●</span>
-                    <span>Mental Health</span>
-                </div>
-            </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>Smoking</span>
         </div>
-        
-        <div style="background: #d4edda; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #28a745;">
-            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-                <span style="color: #28a745; font-size: 1.25rem;">ⓘ</span>
-                <div>
-                    <h3 style="margin-bottom: 0.5rem; color: #155724;">Joint Analysis</h3>
-                    <p style="color: #155724; margin: 0;">The dataset contains shared risk factors that are related to both heart disease and diabetes, allowing joint analysis.</p>
-                </div>
-            </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>Physical Activity</span>
         </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;">
-            <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0; text-align: center;">
-                <div style="font-size: 2rem; color: #1976d2; font-weight: 600; margin-bottom: 0.5rem;">200K+</div>
-                <div style="color: #666; font-size: 0.9rem;">Records</div>
-            </div>
-            <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0; text-align: center;">
-                <div style="font-size: 2rem; color: #28a745; font-weight: 600; margin-bottom: 0.5rem;">10+</div>
-                <div style="color: #666; font-size: 0.9rem;">Features</div>
-            </div>
-            <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0; text-align: center;">
-                <div style="font-size: 2rem; color: #9c27b0; font-weight: 600; margin-bottom: 0.5rem;">2</div>
-                <div style="color: #666; font-size: 0.9rem;">Target Classes</div>
-            </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>Fruits Intake</span>
         </div>
-        
-        <div class="disclaimer">
-            <strong>Disclaimer:</strong> This application is developed for academic and research purposes only. It does not replace professional medical advice.
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>Vegetables Intake</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>General Health</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #1976d2;">●</span>
+            <span>Mental Health</span>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<div style="background: #d4edda; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #28a745;">
+    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+        <span style="color: #28a745; font-size: 1.25rem;">ⓘ</span>
+        <div>
+            <h3 style="margin-bottom: 0.5rem; color: #155724;">Joint Analysis</h3>
+            <p style="color: #155724; margin: 0;">The dataset contains shared risk factors that are related to both heart disease and diabetes, allowing joint analysis.</p>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0; text-align: center;">
+        <div style="font-size: 2rem; color: #1976d2; font-weight: 600; margin-bottom: 0.5rem;">200K+</div>
+        <div style="color: #666; font-size: 0.9rem;">Records</div>
+    </div>
+    <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0; text-align: center;">
+        <div style="font-size: 2rem; color: #28a745; font-weight: 600; margin-bottom: 0.5rem;">10+</div>
+        <div style="color: #666; font-size: 0.9rem;">Features</div>
+    </div>
+    <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0; text-align: center;">
+        <div style="font-size: 2rem; color: #9c27b0; font-weight: 600; margin-bottom: 0.5rem;">2</div>
+        <div style="color: #666; font-size: 0.9rem;">Target Classes</div>
+    </div>
+</div>
+
+<div class="disclaimer">
+    <strong>Disclaimer:</strong> This application is developed for academic and research purposes only. It does not replace professional medical advice.
+</div>
+{% endblock %}

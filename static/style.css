@@ -21,6 +21,22 @@ body.dashboard-layout {
     flex-direction: column;
 }
 
+/* Sticky Sidebar for base layout */
+.sticky-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 180px;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
 .sidebar-header {
     padding: 0 1.5rem 1.5rem;
     border-bottom: 1px solid #e0e0e0;
@@ -329,6 +345,12 @@ body.page {
                 radial-gradient(circle at 80% 10%, rgba(105, 214, 177, 0.08), transparent 35%),
                 var(--bg);
     position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+body.page.dashboard-layout {
+    flex-direction: row;
 }
 
 .bg-gradient {
@@ -347,6 +369,15 @@ body.page {
     place-items: center;
     min-height: 100vh;
     padding: 24px 16px;
+}
+
+/* Content class for dashboard with sidebar */
+body.page.dashboard-layout .content {
+    margin-left: 180px;
+    place-items: unset;
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .auth-shell {

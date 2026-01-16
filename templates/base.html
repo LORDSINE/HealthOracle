@@ -10,9 +10,51 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='logo.ico') }}">
 </head>
-<body class="page">
+<body class="page {% block page_class %}{% endblock %}">
     <div class="bg-gradient"></div>
-    <main class="content" role="main">
+    
+    {% block sidebar %}
+    <!-- Sticky Sidebar -->
+    <aside class="sidebar sticky-sidebar">
+        <div class="sidebar-header">
+            <h3>Health Oracle</h3>
+            <div class="subtitle">ML Project</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard') }}" class="nav-item {% block nav_home %}{% endblock %}">
+                <span>⌂</span> Home
+            </a>
+            <a href="{{ url_for('dataset') }}" class="nav-item {% block nav_dataset %}{% endblock %}">
+                <span>☷</span> Dataset
+            </a>
+            <a href="#" class="nav-item">
+                <span>📊</span> EDA
+            </a>
+            <a href="#" class="nav-item">
+                <span>⚙</span> Modeling
+            </a>
+            <a href="{{ url_for('prediction') }}" class="nav-item {% block nav_prediction %}{% endblock %}">
+                <span>⚡</span> Prediction
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">{% block user_avatar %}U{% endblock %}</div>
+                <div class="user-details">
+                    <div class="user-name">{% block user_name %}User{% endblock %}</div>
+                    <div class="user-id">{% block user_id %}{% endblock %}</div>
+                </div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <span>↪</span> Logout
+            </a>
+        </div>
+    </aside>
+    {% endblock %}
+    
+    <main class="content {% block content_class %}{% endblock %}" role="main">
         {% block content %}{% endblock %}
     </main>
 </body>
