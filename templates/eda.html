@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block title %}EDA - Health Oracle{% endblock %}
+
+{% block page_class %}dashboard-layout{% endblock %}
+
+{% block nav_eda %}active{% endblock %}
+
+{% block user_avatar %}{{ user_name[0] if user_name else 'U' }}{% endblock %}
+{% block user_name %}{{ user_name or 'User' }}{% endblock %}
+{% block user_id %}{{ user_id }}{% endblock %}
+
+{% block content %}
+<div class="eda-wrapper">
+    <!-- Header -->
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Exploratory Data Analysis</h1>
+        <p style="color: #666;">Comprehensive analysis of the health dataset</p>
+    </div>
+
+    <!-- Dataset Overview Card -->
+    <div class="content-card" style="margin-bottom: 2rem;">
+        <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">📊 Dataset Overview</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+            <div class="stat-box">
+                <div class="stat-label">Total Records</div>
+                <div class="stat-value">Loading...</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Features</div>
+                <div class="stat-value">Loading...</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Target Variable</div>
+                <div class="stat-value" style="font-size: 1.2rem; word-break: break-word;">Heart Disease</div>
+                <div style="font-size: 0.75rem; color: #666; margin-top: 0.25rem;">(HeartDiseaseorAttack)</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Missing Values</div>
+                <div class="stat-value">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Sections -->
+    <div class="content-card" style="margin-bottom: 2rem;">
+        <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">🔍 Analysis Categories</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+            <div class="analysis-card">
+                <div class="analysis-icon">📈</div>
+                <h4>Target Distribution</h4>
+                <p>Heart disease class balance and distribution analysis</p>
+                <button class="btn-analysis" onclick="showSection('target')">View Analysis</button>
+            </div>
+
+            <div class="analysis-card">
+                <div class="analysis-icon">📊</div>
+                <h4>Numerical Features</h4>
+                <p>Distribution, statistics, and outlier detection</p>
+                <button class="btn-analysis" onclick="showSection('numerical')">View Analysis</button>
+            </div>
+
+            <div class="analysis-card">
+                <div class="analysis-icon">🎯</div>
+                <h4>Categorical Features</h4>
+                <p>Binary and categorical variable distributions</p>
+                <button class="btn-analysis" onclick="showSection('categorical')">View Analysis</button>
+            </div>
+
+            <div class="analysis-card">
+                <div class="analysis-icon">🔗</div>
+                <h4>Correlations</h4>
+                <p>Feature relationships and correlation matrix</p>
+                <button class="btn-analysis" onclick="showSection('correlation')">View Analysis</button>
+            </div>
+
+            <div class="analysis-card">
+                <div class="analysis-icon">⚠️</div>
+                <h4>Risk Factor Analysis</h4>
+                <p>Multiple risk factors and disease rate analysis</p>
+                <button class="btn-analysis" onclick="showSection('risk')">View Analysis</button>
+            </div>
+
+            <div class="analysis-card">
+                <div class="analysis-icon">🔬</div>
+                <h4>Statistical Tests</h4>
+                <p>Chi-square tests and significance analysis</p>
+                <button class="btn-analysis" onclick="showSection('stats')">View Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder for analysis results -->
+    <div id="analysisResults" class="content-card" style="display: none;">
+        <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">Analysis Results</h3>
+        <div id="resultsContent">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Run Full Analysis Button -->
+    <div style="text-align: center; margin: 2rem 0;">
+        <button class="btn btn-primary" onclick="runFullAnalysis()" style="padding: 0.75rem 2.5rem; font-size: 1rem;">
+            🚀 Run Full EDA Analysis
+        </button>
+        <p style="color: #666; margin-top: 1rem; font-size: 0.9rem;">
+            This will execute the complete EDA pipeline and generate all visualizations
+        </p>
+    </div>
+
+    <!-- Academic Note -->
+    <div class="content-card" style="background: #eff6ff; border: 1px solid #bfdbfe; margin-top: 2rem;">
+        <p style="color: #333; margin: 0;">
+            <strong>📌 Note:</strong> This EDA analysis uses the health_data_clean(1).csv dataset. 
+            The analysis includes distribution plots, correlation analysis, statistical tests, and risk factor assessment.
+            All visualizations are generated using matplotlib, seaborn, and plotly libraries.
+        </p>
+    </div>
+</div>
+
+<style>
+.eda-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.stat-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1976d2;
+}
+
+.analysis-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.analysis-card:hover {
+    border-color: #1976d2;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(25, 118, 210, 0.15);
+}
+
+.analysis-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.analysis-card h4 {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0.5rem 0;
+}
+
+.analysis-card p {
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0.5rem 0 1rem 0;
+    line-height: 1.5;
+}
+
+.btn-analysis {
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-analysis:hover {
+    background: #1565c0;
+    transform: scale(1.05);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.stats-table thead {
+    background: #f8fafc;
+}
+
+.stats-table th,
+.stats-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.stats-table th {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.875rem;
+}
+
+.stats-table td {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.stats-table tr:hover {
+    background: #f8fafc;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #1976d2;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-message {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+</style>
+
+<script>
+// Load dataset overview on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadOverview();
+});
+
+function loadOverview() {
+    fetch('/api/eda/overview')
+        .then(response => response.json())
+        .then(data => {
+            document.querySelectorAll('.stat-value')[0].textContent = data.total_records.toLocaleString();
+            document.querySelectorAll('.stat-value')[1].textContent = data.features;
+            document.querySelectorAll('.stat-value')[3].textContent = data.missing_values;
+        })
+        .catch(error => {
+            console.error('Error loading overview:', error);
+        });
+}
+
+function showSection(section) {
+    const resultsDiv = document.getElementById('analysisResults');
+    const contentDiv = document.getElementById('resultsContent');
+    
+    resultsDiv.style.display = 'block';
+    contentDiv.innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="spinner"></div><p>Loading analysis...</p></div>';
+    
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    
+    let endpoint = '';
+    let title = '';
+    
+    switch(section) {
+        case 'target':
+            endpoint = '/api/eda/target';
+            title = '📈 Target Distribution Analysis';
+            break;
+        case 'numerical':
+            endpoint = '/api/eda/numerical';
+            title = '📊 Numerical Features Analysis';
+            break;
+        case 'categorical':
+            endpoint = '/api/eda/categorical';
+            title = '🎯 Categorical Features Analysis';
+            break;
+        case 'correlation':
+            endpoint = '/api/eda/correlation';
+            title = '🔗 Correlation Analysis';
+            break;
+        case 'risk':
+            endpoint = '/api/eda/risk';
+            title = '⚠️ Risk Factor Analysis';
+            break;
+        case 'stats':
+            endpoint = '/api/eda/stats';
+            title = '🔬 Statistical Tests';
+            break;
+    }
+    
+    fetch(endpoint)
+        .then(response => response.json())
+        .then(data => {
+            displayResults(data, title, section);
+        })
+        .catch(error => {
+            contentDiv.innerHTML = `<div class="error-message">Error loading analysis: ${error.message}</div>`;
+        });
+}
+
+function displayResults(data, title, section) {
+    const contentDiv = document.getElementById('resultsContent');
+    let html = `<h3 style="margin-bottom: 1.5rem;">${title}</h3>`;
+    
+    // Display statistics if available
+    if (data.stats) {
+        html += '<div class="stats-container">';
+        
+        if (section === 'target') {
+            html += `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="stat-box">
+                        <div class="stat-label">No Disease</div>
+                        <div class="stat-value">${data.stats.no_disease.toLocaleString()} (${data.stats.no_disease_pct}%)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Disease</div>
+                        <div class="stat-value" style="color: #ef4444;">${data.stats.disease.toLocaleString()} (${data.stats.disease_pct}%)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Imbalance Ratio</div>
+                        <div class="stat-value">${data.stats.imbalance_ratio}:1</div>
+                    </div>
+                </div>
+            `;
+        } else if (section === 'numerical') {
+            html += '<table class="stats-table"><thead><tr><th>Feature</th><th>Mean</th><th>Median</th><th>Std</th><th>Skewness</th><th>Kurtosis</th></tr></thead><tbody>';
+            for (const [feature, stats] of Object.entries(data.stats)) {
+                html += `<tr>
+                    <td><strong>${feature}</strong></td>
+                    <td>${stats.mean}</td>
+                    <td>${stats.median}</td>
+                    <td>${stats.std}</td>
+                    <td>${stats.skewness}</td>
+                    <td>${stats.kurtosis}</td>
+                </tr>`;
+            }
+            html += '</tbody></table>';
+        } else if (section === 'categorical') {
+            html += '<table class="stats-table"><thead><tr><th>Feature</th><th>No (0)</th><th>Yes (1)</th></tr></thead><tbody>';
+            data.stats.forEach(item => {
+                html += `<tr>
+                    <td><strong>${item.feature}</strong></td>
+                    <td>${item.no_count.toLocaleString()} (${item.no_pct}%)</td>
+                    <td>${item.yes_count.toLocaleString()} (${item.yes_pct}%)</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+        } else if (section === 'risk') {
+            html += '<table class="stats-table"><thead><tr><th>Risk Factors</th><th>Disease Rate</th><th>Sample Count</th></tr></thead><tbody>';
+            data.stats.forEach(item => {
+                html += `<tr>
+                    <td><strong>${item.RiskFactorCount}</strong></td>
+                    <td>${item.DiseaseRate}%</td>
+                    <td>${item.Count.toLocaleString()}</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+        }
+        
+        html += '</div>';
+    }
+    
+    // Display correlation data
+    if (data.top_correlations) {
+        html += '<div style="margin: 1.5rem 0;"><h4>Top Correlations with Heart Disease</h4>';
+        html += '<table class="stats-table"><thead><tr><th>Feature</th><th>Correlation</th></tr></thead><tbody>';
+        data.top_correlations.features.slice(0, 10).forEach((feature, idx) => {
+            const value = data.top_correlations.values[idx];
+            const color = value > 0 ? 'color: #ef4444;' : 'color: #10b981;';
+            html += `<tr><td><strong>${feature}</strong></td><td style="${color}">${value}</td></tr>`;
+        });
+        html += '</tbody></table></div>';
+    }
+    
+    // Display chi-square tests
+    if (data.chi_square_tests) {
+        html += '<div style="margin: 1.5rem 0;"><h4>Chi-Square Test Results</h4>';
+        html += '<table class="stats-table"><thead><tr><th>Feature</th><th>Chi²</th><th>p-value</th><th>Cramér\'s V</th><th>Significant</th></tr></thead><tbody>';
+        data.chi_square_tests.forEach(test => {
+            html += `<tr>
+                <td><strong>${test.feature}</strong></td>
+                <td>${test.chi2}</td>
+                <td>${test.p_value}</td>
+                <td>${test.cramers_v}</td>
+                <td>${test.significant}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        html += '<p style="margin-top: 1rem; font-size: 0.875rem; color: #666;"><em>Cramér\'s V Interpretation: 0.1=Small, 0.3=Medium, 0.5=Large effect</em></p></div>';
+    }
+    
+    // Display charts (can be single chart or array of charts)
+    if (data.chart) {
+        html += '<div style="margin-top: 2rem;"><img src="' + data.chart + '" style="max-width: 100%; height: auto;" /></div>';
+    }
+    
+    if (data.charts && Array.isArray(data.charts)) {
+        data.charts.forEach((chart, idx) => {
+            html += '<div style="margin-top: 2rem;"><img src="' + chart + '" style="max-width: 100%; height: auto;" /></div>';
+        });
+    }
+    
+    contentDiv.innerHTML = html;
+}
+
+function runFullAnalysis() {
+    if (confirm('This will load all analysis sections one by one. Continue?')) {
+        const sections = ['target', 'numerical', 'categorical', 'correlation', 'risk', 'stats'];
+        let index = 0;
+        
+        function loadNext() {
+            if (index < sections.length) {
+                showSection(sections[index]);
+                index++;
+                setTimeout(loadNext, 1000);
+            }
+        }
+        
+        loadNext();
+    }
+}
+</script>
+{% endblock %}
