@@ -10,7 +10,8 @@ from eda_analysis import (
     analyze_categorical_features,
     analyze_correlations,
     analyze_risk_factors,
-    analyze_statistical_tests
+    analyze_statistical_tests,
+    analyze_feature_interactions
 )
 
 def dashboard():
@@ -170,6 +171,17 @@ def eda_stats():
     
     try:
         data = analyze_statistical_tests()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_interactions():
+    """API endpoint for feature interaction analysis."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = analyze_feature_interactions()
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500

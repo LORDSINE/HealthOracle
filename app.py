@@ -20,7 +20,7 @@ from database import init_db
 from auth import login, auth_google, signup, google_link, google_success, signup_success
 from user_routes import (dashboard, profile, dataset, prediction, eda, logout,
                          eda_overview, eda_target, eda_numerical, eda_categorical,
-                         eda_correlation, eda_risk, eda_stats)
+                         eda_correlation, eda_risk, eda_stats, eda_interactions)
 from password_reset import forgot_password
 
 # Load environment variables from .env if present
@@ -73,6 +73,7 @@ app.add_url_rule('/api/eda/categorical', 'eda_categorical', eda_categorical)
 app.add_url_rule('/api/eda/correlation', 'eda_correlation', eda_correlation)
 app.add_url_rule('/api/eda/risk', 'eda_risk', eda_risk)
 app.add_url_rule('/api/eda/stats', 'eda_stats', eda_stats)
+app.add_url_rule('/api/eda/interactions', 'eda_interactions', eda_interactions)
 
 # Error route for model not implemented
 @app.route('/error/503')

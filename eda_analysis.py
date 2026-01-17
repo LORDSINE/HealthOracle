@@ -18,7 +18,7 @@ sns.set_style('whitegrid')
 plt.rcParams['figure.figsize'] = (12, 6)
 
 # Load dataset
-DATA_PATH = os.path.join(os.path.dirname(__file__), 'data', 'health_data_clean(1).csv')
+DATA_PATH = os.path.join(os.path.dirname(__file__), 'data', 'health_dataset.csv')
 
 def load_data():
     """Load the dataset."""
@@ -459,5 +459,77 @@ def analyze_statistical_tests():
     
     return {
         'chi_square_tests': chi_results,
+        'chart': fig_to_base64(fig)
+    }
+
+def analyze_feature_interactions():
+    """Analyze feature interactions - how combined factors affect heart disease risk."""
+    df = load_data()
+    
+    # Create age groups if not exists
+    if 'AgeGroup' not in df.columns:
+        df['AgeGroup'] = pd.cut(df['Age'], bins=[0, 5, 9, 13], labels=['18-44', '45-64', '65+'])
+    
+    # Create figure with multiple interaction plots
+    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    
+    # 1. Age Group × High BP interaction
+    interaction1 = df.groupby(['AgeGroup', 'HighBP'])['HeartDiseaseorAttack'].mean() * 100
+    interaction1 = interaction1.unstack()
+    interaction1.plot(kind='bar', ax=axes[0, 0], color=['#22C55E', '#EF4444'], alpha=0.8)
+    axes[0, 0].set_title('Heart Disease Rate: Age Group × High Blood Pressure', fontsize=12, fontweight='bold')
+    axes[0, 0].set_xlabel('Age Group')
+    axes[0, 0].set_ylabel('Disease Rate (%)')
+    axes[0, 0].legend(['No HighBP', 'Has HighBP'])
+    axes[0, 0].tick_params(axis='x', rotation=0)
+    
+    # 2. Age Group × General Health interaction
+    if 'GenHlth' in df.columns:
+        # Bin GenHlth into categories
+        df['GenHlth_cat'] = pd.cut(df['GenHlth'], bins=[0, 2, 3, 5], labels=['Good', 'Fair', 'Poor'])
+        interaction2 = df.groupby(['AgeGroup', 'GenHlth_cat'])['HeartDiseaseorAttack'].mean() * 100
+        interaction2 = interaction2.unstack()
+        interaction2.plot(kind='bar', ax=axes[0, 1], color=['#22C55E', '#F59E0B', '#EF4444'], alpha=0.8)
+        axes[0, 1].set_title('Heart Disease Rate: Age Group × General Health', fontsize=12, fontweight='bold')
+        axes[0, 1].set_xlabel('Age Group')
+        axes[0, 1].set_ylabel('Disease Rate (%)')
+        axes[0, 1].legend(['Good Health', 'Fair Health', 'Poor Health'])
+        axes[0, 1].tick_params(axis='x', rotation=0)
+    
+    # 3. HighBP × HighChol interaction
+    interaction3 = df.groupby(['HighBP', 'HighChol'])['HeartDiseaseorAttack'].mean() * 100
+    interaction3 = interaction3.unstack()
+    interaction3.plot(kind='bar', ax=axes[1, 0], color=['#3B82F6', '#8B5CF6'], alpha=0.8)
+    axes[1, 0].set_title('Heart Disease Rate: High BP × High Cholesterol', fontsize=12, fontweight='bold')
+    axes[1, 0].set_xlabel('High Blood Pressure')
+    axes[1, 0].set_ylabel('Disease Rate (%)')
+    axes[1, 0].set_xticklabels(['No HighBP', 'Has HighBP'], rotation=0)
+    axes[1, 0].legend(['No HighChol', 'Has HighChol'])
+    
+    # 4. Physical Activity × BMI Group interaction
+    if 'BMI_group' in df.columns:
+        interaction4 = df.groupby(['PhysActivity', 'BMI_group'])['HeartDiseaseorAttack'].mean() * 100
+        interaction4 = interaction4.unstack()
+        interaction4.plot(kind='bar', ax=axes[1, 1], alpha=0.8)
+        axes[1, 1].set_title('Heart Disease Rate: Physical Activity × BMI Group', fontsize=12, fontweight='bold')
+        axes[1, 1].set_xlabel('Physical Activity')
+        axes[1, 1].set_ylabel('Disease Rate (%)')
+        axes[1, 1].set_xticklabels(['No Activity', 'Active'], rotation=0)
+        axes[1, 1].legend(title='BMI Group')
+    else:
+        # Alternative: Smoker × Physical Activity
+        interaction4 = df.groupby(['Smoker', 'PhysActivity'])['HeartDiseaseorAttack'].mean() * 100
+        interaction4 = interaction4.unstack()
+        interaction4.plot(kind='bar', ax=axes[1, 1], color=['#F97316', '#06B6D4'], alpha=0.8)
+        axes[1, 1].set_title('Heart Disease Rate: Smoker × Physical Activity', fontsize=12, fontweight='bold')
+        axes[1, 1].set_xlabel('Smoker Status')
+        axes[1, 1].set_ylabel('Disease Rate (%)')
+        axes[1, 1].set_xticklabels(['Non-Smoker', 'Smoker'], rotation=0)
+        axes[1, 1].legend(['No Activity', 'Active'])
+    
+    plt.suptitle('Feature Interaction Analysis', fontsize=16, fontweight='bold', y=1.02)
+    plt.tight_layout()
+    
+    return {
         'chart': fig_to_base64(fig)
     }
