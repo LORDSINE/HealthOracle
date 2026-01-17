@@ -92,77 +92,162 @@ def analyze_target_distribution():
     }
 
 def analyze_numerical_features():
-    """Analyze numerical features with distributions and box plots."""
+    """
+    Professional Numerical Features Analysis with 5 sections:
+    1. Statistical Summary Table
+    2. Distribution Plots (Histogram + KDE) for continuous features
+    3. Outlier Detection (Boxplots)
+    4. Numerical Features vs Target (Violin plots)
+    5. Correlation with Target (Bar chart)
+    """
     df = load_data()
-    numerical_cols = ['BMI', 'GenHlth', 'MentHlth', 'PhysHlth', 'Age']
     
-    # Distribution plots
-    fig1, axes = plt.subplots(2, 3, figsize=(18, 12))
-    axes = axes.ravel()
+    # Define feature categories
+    continuous_cols = ['BMI', 'Age', 'GenHlth', 'MentHlth', 'PhysHlth', 'Education', 'Income']
+    distribution_cols = ['BMI', 'Age', 'GenHlth']  # Best picks for distribution plots
+    outlier_cols = ['BMI', 'MentHlth', 'PhysHlth']  # For boxplot outlier detection
+    vs_target_cols = ['BMI', 'Age', 'GenHlth']  # For violin plots vs target
     
-    for idx, col in enumerate(numerical_cols):
-        # Histogram with KDE
-        sns.histplot(df[col], kde=True, ax=axes[idx], color='steelblue', bins=30)
-        axes[idx].set_title(f'Distribution of {col}', fontsize=12, fontweight='bold')
-        axes[idx].set_xlabel(col)
-        axes[idx].set_ylabel('Frequency')
-        
-        # Add statistics
-        mean_val = df[col].mean()
-        median_val = df[col].median()
-        axes[idx].axvline(mean_val, color='red', linestyle='--', label=f'Mean: {mean_val:.2f}')
-        axes[idx].axvline(median_val, color='green', linestyle='--', label=f'Median: {median_val:.2f}')
-        axes[idx].legend()
+    # =========================================================================
+    # SECTION 1: Statistical Summary Table
+    # =========================================================================
+    stats_summary = []
+    for col in continuous_cols:
+        if col in df.columns:
+            stats_summary.append({
+                'feature': col,
+                'mean': float(round(df[col].mean(), 2)),
+                'median': float(round(df[col].median(), 2)),
+                'std': float(round(df[col].std(), 2)),
+                'min': float(round(df[col].min(), 2)),
+                'max': float(round(df[col].max(), 2)),
+                'skewness': float(round(df[col].skew(), 2)),
+                'kurtosis': float(round(df[col].kurtosis(), 2))
+            })
     
-    # Remove extra subplot
-    fig1.delaxes(axes[5])
+    # =========================================================================
+    # SECTION 2: Distribution Plots (Histogram + KDE)
+    # =========================================================================
+    fig1, axes = plt.subplots(1, 3, figsize=(16, 5))
+    colors = ['#3B82F6', '#10B981', '#F59E0B']
+    
+    for idx, col in enumerate(distribution_cols):
+        if col in df.columns:
+            sns.histplot(df[col], kde=True, ax=axes[idx], color=colors[idx], bins=30, alpha=0.7)
+            
+            # Add mean and median lines
+            mean_val = df[col].mean()
+            median_val = df[col].median()
+            axes[idx].axvline(mean_val, color='#EF4444', linestyle='--', linewidth=2, label=f'Mean: {mean_val:.1f}')
+            axes[idx].axvline(median_val, color='#22C55E', linestyle='-', linewidth=2, label=f'Median: {median_val:.1f}')
+            
+            axes[idx].set_title(f'Distribution of {col}', fontsize=13, fontweight='bold', pad=12)
+            axes[idx].set_xlabel(col, fontsize=11)
+            axes[idx].set_ylabel('Frequency', fontsize=11)
+            axes[idx].legend(loc='upper right', fontsize=9)
+            axes[idx].tick_params(labelsize=10)
+    
+    plt.suptitle('Distribution Analysis of Key Numerical Features', fontsize=15, fontweight='bold', y=1.02)
     plt.tight_layout()
-    chart1 = fig_to_base64(fig1)
+    chart_distribution = fig_to_base64(fig1)
     
-    # Box plots for outlier detection
-    fig2, axes = plt.subplots(1, 5, figsize=(18, 5))
-    for idx, col in enumerate(numerical_cols):
-        sns.boxplot(y=df[col], ax=axes[idx], color='lightcoral')
-        axes[idx].set_title(f'Boxplot of {col}', fontsize=12, fontweight='bold')
-        axes[idx].set_ylabel(col)
+    # =========================================================================
+    # SECTION 3: Outlier Detection (Boxplots)
+    # =========================================================================
+    fig2, axes = plt.subplots(1, 3, figsize=(14, 5))
+    box_colors = ['#8B5CF6', '#EC4899', '#06B6D4']
     
+    for idx, col in enumerate(outlier_cols):
+        if col in df.columns:
+            bp = axes[idx].boxplot(df[col].dropna(), patch_artist=True, widths=0.6)
+            bp['boxes'][0].set_facecolor(box_colors[idx])
+            bp['boxes'][0].set_alpha(0.7)
+            bp['medians'][0].set_color('#1F2937')
+            bp['medians'][0].set_linewidth(2)
+            
+            # Count outliers
+            Q1 = df[col].quantile(0.25)
+            Q3 = df[col].quantile(0.75)
+            IQR = Q3 - Q1
+            outliers = df[(df[col] < Q1 - 1.5*IQR) | (df[col] > Q3 + 1.5*IQR)][col]
+            outlier_pct = len(outliers) / len(df) * 100
+            
+            axes[idx].set_title(f'{col}\n({outlier_pct:.1f}% outliers)', fontsize=12, fontweight='bold')
+            axes[idx].set_ylabel(col, fontsize=11)
+            axes[idx].tick_params(labelsize=10)
+            axes[idx].set_xticklabels([''])
+    
+    plt.suptitle('Outlier Detection using Boxplots', fontsize=15, fontweight='bold', y=1.02)
     plt.tight_layout()
-    chart2 = fig_to_base64(fig2)
+    chart_outliers = fig_to_base64(fig2)
     
-    # Box plots: Numerical features vs Target
-    fig3, axes = plt.subplots(2, 3, figsize=(18, 10))
-    axes = axes.ravel()
+    # =========================================================================
+    # SECTION 4: Numerical Features vs Target (Violin Plots)
+    # =========================================================================
+    fig3, axes = plt.subplots(1, 3, figsize=(16, 6))
     
-    for idx, col in enumerate(numerical_cols):
-        sns.boxplot(data=df, x='HeartDiseaseorAttack', y=col, palette='Set2', ax=axes[idx])
-        axes[idx].set_title(f'{col} vs Heart Disease', fontsize=12, fontweight='bold')
-        axes[idx].set_xlabel('Heart Disease (0=No, 1=Yes)')
-        axes[idx].set_ylabel(col)
+    for idx, col in enumerate(vs_target_cols):
+        if col in df.columns:
+            sns.violinplot(data=df, x='HeartDiseaseorAttack', y=col, 
+                          palette=['#90EE90', '#FF6B6B'], ax=axes[idx], inner='box')
+            axes[idx].set_title(f'{col} vs Heart Disease', fontsize=13, fontweight='bold', pad=12)
+            axes[idx].set_xlabel('Heart Disease (0=No, 1=Yes)', fontsize=11)
+            axes[idx].set_ylabel(col, fontsize=11)
+            axes[idx].set_xticklabels(['No Disease', 'Has Disease'], fontsize=10)
+            axes[idx].tick_params(labelsize=10)
     
-    # Violin plot for last one
-    sns.violinplot(data=df, x='HeartDiseaseorAttack', y='Age', palette='muted', ax=axes[5])
-    axes[5].set_title('Age vs Heart Disease (Violin)', fontsize=12, fontweight='bold')
-    axes[5].set_xlabel('Heart Disease (0=No, 1=Yes)')
-    
+    plt.suptitle('Numerical Features vs Heart Disease (Violin Plots)', fontsize=15, fontweight='bold', y=1.02)
     plt.tight_layout()
-    chart3 = fig_to_base64(fig3)
+    chart_vs_target = fig_to_base64(fig3)
     
-    # Statistics
-    stats = {}
-    for col in numerical_cols:
-        stats[col] = {
-            'mean': round(df[col].mean(), 2),
-            'median': round(df[col].median(), 2),
-            'std': round(df[col].std(), 2),
-            'min': round(df[col].min(), 2),
-            'max': round(df[col].max(), 2),
-            'skewness': round(df[col].skew(), 2),
-            'kurtosis': round(df[col].kurtosis(), 2)
-        }
+    # =========================================================================
+    # SECTION 5: Correlation with Target (Bar Chart)
+    # =========================================================================
+    # Calculate correlations with target
+    all_numerical = ['BMI', 'Age', 'GenHlth', 'MentHlth', 'PhysHlth', 'Education', 'Income',
+                     'HighBP', 'HighChol', 'Smoker', 'PhysActivity', 'DiffWalk', 'Diabetes_binary']
+    
+    correlations = []
+    for col in all_numerical:
+        if col in df.columns:
+            corr = df[col].corr(df['HeartDiseaseorAttack'])
+            correlations.append({'feature': col, 'correlation': float(round(corr, 4))})
+    
+    # Sort by absolute correlation
+    correlations = sorted(correlations, key=lambda x: abs(x['correlation']), reverse=True)
+    
+    # Create bar chart
+    fig4, ax = plt.subplots(figsize=(12, 6))
+    features = [c['feature'] for c in correlations]
+    corr_values = [c['correlation'] for c in correlations]
+    colors = ['#EF4444' if v > 0 else '#22C55E' for v in corr_values]
+    
+    bars = ax.barh(features, corr_values, color=colors, alpha=0.8, edgecolor='#1F2937', linewidth=0.5)
+    ax.axvline(x=0, color='#1F2937', linewidth=1)
+    ax.set_xlabel('Correlation Coefficient', fontsize=12)
+    ax.set_ylabel('Features', fontsize=12)
+    ax.set_title('Correlation of Numerical Features with Heart Disease', fontsize=14, fontweight='bold', pad=15)
+    ax.tick_params(labelsize=10)
+    
+    # Add correlation values on bars
+    for bar, val in zip(bars, corr_values):
+        width = bar.get_width()
+        ax.text(width + 0.01 if width >= 0 else width - 0.04, bar.get_y() + bar.get_height()/2,
+                f'{val:.3f}', va='center', fontsize=9, fontweight='bold')
+    
+    ax.invert_yaxis()  # Highest correlation at top
+    plt.tight_layout()
+    chart_correlation = fig_to_base64(fig4)
     
     return {
-        'stats': stats,
-        'charts': [chart1, chart2, chart3]
+        'stats_summary': stats_summary,
+        'correlations': correlations,
+        'charts': {
+            'distribution': chart_distribution,
+            'outliers': chart_outliers,
+            'vs_target': chart_vs_target,
+            'correlation': chart_correlation
+        }
     }
 
 def analyze_categorical_features():
