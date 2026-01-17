@@ -74,12 +74,9 @@
                 </div>
             </form>
         </div>
-    </div>
-
-    <div class="profile-card">
-        <h2>Danger Zone</h2>
-        <p style="color: #666; margin-bottom: 1.5rem;">These actions cannot be undone</p>
         
+        <br />
+
         <button class="btn-danger" onclick="if(confirm('Are you sure you want to logout?')) { window.location.href='{{ url_for('logout') }}'; }">
             <span>↪</span> Logout
         </button>
