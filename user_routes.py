@@ -1,8 +1,17 @@
 """User routes and dashboard functionality."""
 
-from flask import render_template, request, redirect, url_for, session
+from flask import render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from database import get_db, get_user_by_id, update_password
+from eda_analysis import (
+    get_dataset_overview,
+    analyze_target_distribution,
+    analyze_numerical_features,
+    analyze_categorical_features,
+    analyze_correlations,
+    analyze_risk_factors,
+    analyze_statistical_tests
+)
 
 def dashboard():
     """Dashboard page showing user information and project overview."""
@@ -76,6 +85,94 @@ def prediction():
         return redirect(url_for('login'))
     
     return render_template('prediction.html', user_name=user['name'], user_id=user['user_id'])
+
+def eda():
+    """Exploratory Data Analysis page."""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = get_user_by_id(session['user_id'])
+    if not user:
+        return redirect(url_for('login'))
+    
+    return render_template('eda.html', user_name=user['name'], user_id=user['user_id'])
+
+def eda_overview():
+    """API endpoint for dataset overview."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = get_dataset_overview()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_target():
+    """API endpoint for target distribution analysis."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = analyze_target_distribution()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_numerical():
+    """API endpoint for numerical features analysis."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = analyze_numerical_features()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_categorical():
+    """API endpoint for categorical features analysis."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = analyze_categorical_features()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_correlation():
+    """API endpoint for correlation analysis."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = analyze_correlations()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_risk():
+    """API endpoint for risk factor analysis."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = analyze_risk_factors()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_stats():
+    """API endpoint for statistical tests."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = analyze_statistical_tests()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def logout():
     """Log out the user by clearing the session."""

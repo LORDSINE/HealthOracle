@@ -50,26 +50,36 @@
         <h3 style="font-weight: 500; color: #333; margin-bottom: 2rem;">Health Profile</h3>
         
         <form id="predictionForm">
-            <!-- Personal Metrics -->
+            <!-- Personal Information -->
             <div class="metric-section">
                 <div class="metric-header">
                     <span class="metric-icon">👤</span>
-                    <h4>Personal Metrics</h4>
+                    <h4>Personal Information</h4>
                 </div>
                 
                 <div class="metric-inputs">
                     <div class="metric-input">
                         <label>Age</label>
                         <div class="input-group">
-                            <input type="number" id="age" value="35" min="20" max="90" step="1">
+                            <input type="number" id="age" value="35" min="18" max="100" step="1">
                             <span class="unit">years</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-input">
+                        <label>Sex</label>
+                        <div class="input-group">
+                            <select id="sex" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                                <option value="0">Female</option>
+                                <option value="1">Male</option>
+                            </select>
                         </div>
                     </div>
 
                     <div class="metric-input">
                         <label>Height</label>
                         <div class="input-group">
-                            <input type="number" id="height" value="175" min="1" max="250" step="1">
+                            <input type="number" id="height" value="175" min="100" max="250" step="1">
                             <span class="unit">cm</span>
                         </div>
                     </div>
@@ -77,15 +87,15 @@
                     <div class="metric-input">
                         <label>Weight</label>
                         <div class="input-group">
-                            <input type="number" id="weight" value="75" min="1" max="300" step="0.1">
+                            <input type="number" id="weight" value="75" min="30" max="300" step="0.1">
                             <span class="unit">kg</span>
                         </div>
                     </div>
 
-                    <div class="metric-input" style="border-top: 1px solid #e0e0e0; padding-top: 1rem;">
+                    <div class="metric-input" style="border-top: 1px solid #e0e0e0; padding-top: 1rem; margin-top: 0.5rem;">
                         <label>Calculated BMI</label>
                         <div class="input-group">
-                            <span id="bmiValue" style="font-weight: 600;">0.0</span>
+                            <span id="bmiValue" style="font-weight: 600; font-size: 1.1rem;">0.0</span>
                             <span class="unit">kg/m²</span>
                             <span id="bmiStatus" class="status-badge"></span>
                         </div>
@@ -93,72 +103,82 @@
                 </div>
             </div>
 
-            <!-- Blood Metrics -->
+            <!-- Health Conditions -->
             <div class="metric-section">
                 <div class="metric-header">
-                    <span class="metric-icon">🩸</span>
-                    <h4>Blood Metrics</h4>
+                    <span class="metric-icon">🩺</span>
+                    <h4>Health Conditions</h4>
                 </div>
                 
-                <div class="metric-inputs">
-                    <div class="slider-metric">
-                        <label>Glucose Level</label>
-                        <input type="range" id="glucose" value="100" min="70" max="300" step="1" class="slider">
-                        <div class="slider-display">
-                            <span id="glucoseValue">100</span>
-                            <span class="unit">mg/dL</span>
-                            <span id="glucoseStatus" class="status-badge"></span>
-                        </div>
+                <div class="metric-inputs" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div class="question-item">
+                        <label style="font-weight: 500; color: #333; margin-bottom: 0.5rem; display: block;">Do you have high blood pressure?</label>
+                        <select id="highBP" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
                     </div>
 
-                    <div class="slider-metric">
-                        <label>HbA1c Percentage</label>
-                        <input type="range" id="hba1c" value="5.5" min="4" max="12" step="0.1" class="slider">
-                        <div class="slider-display">
-                            <span id="hba1cValue">5.5</span>
-                            <span class="unit">%</span>
-                            <span id="hba1cStatus" class="status-badge"></span>
-                        </div>
+                    <div class="question-item">
+                        <label style="font-weight: 500; color: #333; margin-bottom: 0.5rem; display: block;">Do you have high cholesterol?</label>
+                        <select id="highChol" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                            <option value="2">I don't know</option>
+                        </select>
                     </div>
 
-                    <div class="slider-metric">
-                        <label>Cholesterol Level</label>
-                        <input type="range" id="cholesterol" value="200" min="100" max="400" step="1" class="slider">
-                        <div class="slider-display">
-                            <span id="cholesterolValue">200</span>
-                            <span class="unit">mg/dL</span>
-                            <span id="cholesterolStatus" class="status-badge"></span>
-                        </div>
+                    <div class="question-item">
+                        <label style="font-weight: 500; color: #333; margin-bottom: 0.5rem; display: block;">Do you have diabetes or pre-diabetes?</label>
+                        <select id="diabetes" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Vitals -->
+            <!-- Lifestyle Factors -->
             <div class="metric-section">
                 <div class="metric-header">
-                    <span class="metric-icon">💓</span>
-                    <h4>Vitals</h4>
+                    <span class="metric-icon">🏃</span>
+                    <h4>Lifestyle & Activity</h4>
                 </div>
                 
-                <div class="metric-inputs">
-                    <div class="slider-metric">
-                        <label>Systolic Blood Pressure</label>
-                        <input type="range" id="systolic" value="120" min="90" max="200" step="1" class="slider">
-                        <div class="slider-display">
-                            <span id="systolicValue">120</span>
-                            <span class="unit">mmHg</span>
-                            <span id="systolicStatus" class="status-badge"></span>
-                        </div>
+                <div class="metric-inputs" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div class="question-item">
+                        <label style="font-weight: 500; color: #333; margin-bottom: 0.5rem; display: block;">Have you smoked a lot in your life (100+ cigarettes ever)?</label>
+                        <select id="smoker" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
                     </div>
 
-                    <div class="slider-metric">
-                        <label>Maximum Heart Rate</label>
-                        <input type="range" id="heartRate" value="150" min="60" max="220" step="1" class="slider">
-                        <div class="slider-display">
-                            <span id="heartRateValue">150</span>
-                            <span class="unit">bpm</span>
-                            <span id="heartRateStatus" class="status-badge"></span>
-                        </div>
+                    <div class="question-item">
+                        <label style="font-weight: 500; color: #333; margin-bottom: 0.5rem; display: block;">How would you rate your overall health?</label>
+                        <select id="genHlth" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                            <option value="1">Excellent</option>
+                            <option value="2">Very Good</option>
+                            <option value="3" selected>Good</option>
+                            <option value="4">Fair</option>
+                            <option value="5">Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="question-item">
+                        <label style="font-weight: 500; color: #333; margin-bottom: 0.5rem; display: block;">Do you regularly get moderate or vigorous physical activity?</label>
+                        <select id="physActivity" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="question-item">
+                        <label style="font-weight: 500; color: #333; margin-bottom: 0.5rem; display: block;">Do you have serious difficulty walking or climbing stairs?</label>
+                        <select id="diffWalk" class="field__input" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -167,9 +187,42 @@
 
     <!-- Predict Button -->
     <div style="text-align: center; margin-bottom: 2rem;">
-        <button onclick="generatePrediction()" class="btn btn-primary" style="padding: 0.75rem 3rem; font-size: 1rem;">
+        <button onclick="showModelSelection()" class="btn btn-primary" style="padding: 0.75rem 3rem; font-size: 1rem;">
             Generate Risk Prediction
         </button>
+    </div>
+
+    <!-- Model Selection Modal -->
+    <div id="modelSelectionModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeModelSelection()"></div>
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Select Prediction Model</h2>
+                <button class="modal-close" onclick="closeModelSelection()">✕</button>
+            </div>
+            
+            <div class="modal-body">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <button onclick="generatePrediction('lr')" class="model-btn">
+                        <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">📈</span>
+                        <h3 style="margin: 0;">Logistic Regression</h3>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: #666;">Linear classification model</p>
+                    </button>
+                    
+                    <button onclick="generatePrediction('rf')" class="model-btn">
+                        <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌳</span>
+                        <h3 style="margin: 0;">Random Forest</h3>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: #666;">Ensemble learning method</p>
+                    </button>
+                    
+                    <button onclick="generatePrediction('svm')" class="model-btn">
+                        <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚙️</span>
+                        <h3 style="margin: 0;">Support Vector Machine</h3>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: #666;">Maximum margin classifier</p>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Prediction Results Modal -->
@@ -177,36 +230,12 @@
         <div class="modal-overlay" onclick="closeResultsModal()"></div>
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Cardiovascular Disease Risk Assessment</h2>
+                <h2>Prediction Results</h2>
                 <button class="modal-close" onclick="closeResultsModal()">✕</button>
             </div>
             
             <div class="modal-body">
-                <div class="result-card cvd" style="border: none; background: #fef2f2; padding: 2rem;">
-                    <div class="result-header">
-                        <span class="result-icon" style="font-size: 2rem;">❤️</span>
-                        <h3 style="font-size: 1.25rem;">CVD Risk Assessment</h3>
-                    </div>
-                    
-                    <div class="result-content">
-                        <div class="result-row" style="margin-bottom: 1.5rem;">
-                            <span style="font-size: 1rem;">Risk Level</span>
-                            <span id="cvdRisk" class="risk-badge" style="font-size: 1rem; padding: 0.5rem 1rem;"></span>
-                        </div>
-
-                        <div class="progress-section">
-                            <div class="progress-label">
-                                <span>Risk Score</span>
-                                <span id="cvdScore">0</span>
-                            </div>
-                            <div class="progress-bar" style="height: 12px;">
-                                <div id="cvdProgress" class="progress-fill"></div>
-                            </div>
-                        </div>
-
-                        <p class="confidence-text" style="margin-top: 1rem;">Prediction Confidence: <span id="cvdConfidence">0</span>%</p>
-                    </div>
-                </div>
+                <p>Results will be displayed here after model implementation.</p>
             </div>
         </div>
     </div>
@@ -376,6 +405,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.question-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.question-item label {
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 .metric-input label {
@@ -603,6 +642,28 @@
     margin: 0;
 }
 
+.model-btn {
+    width: 100%;
+    padding: 1.5rem;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.model-btn:hover {
+    border-color: #1976d2;
+    background: #f0f7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+}
+
+.model-btn h3 {
+    color: #333;
+}
+
 @media (max-width: 768px) {
     .flow-diagram {
         flex-direction: column;
@@ -628,26 +689,19 @@
 <script>
     // Update values and status indicators in real-time
     function updateAllValues() {
-        const age = parseInt(document.getElementById('age').value);
         const height = parseInt(document.getElementById('height').value);
         const weight = parseFloat(document.getElementById('weight').value);
         
-        // Calculate BMI
-        const bmi = weight / ((height / 100) * (height / 100));
+        // Calculate BMI: weight(kg) / height(m)^2
+        const heightInMeters = height / 100;
+        const bmi = weight / (heightInMeters * heightInMeters);
         document.getElementById('bmiValue').textContent = bmi.toFixed(1);
         updateBMIStatus(bmi);
-        
-        // Update other statuses
-        updateGlucoseStatus(parseInt(document.getElementById('glucose').value));
-        updateHba1cStatus(parseFloat(document.getElementById('hba1c').value));
-        updateCholesterolStatus(parseInt(document.getElementById('cholesterol').value));
-        updateSystolicStatus(parseInt(document.getElementById('systolic').value));
-        updateHeartRateStatus(parseInt(document.getElementById('heartRate').value));
     }
 
     function getStatusColor(status) {
-        if (status === 'Normal' || status === 'Desirable' || status === 'Normal') return '#10b981';
-        if (status.includes('Elevated') || status.includes('Borderline') || status === 'Overweight') return '#f59e0b';
+        if (status === 'Normal') return '#10b981';
+        if (status === 'Underweight' || status === 'Overweight') return '#f59e0b';
         return '#ef4444';
     }
 
@@ -664,135 +718,25 @@
         elem.style.color = getStatusColor(text);
     }
 
-    function updateGlucoseStatus(value) {
-        let text = '';
-        if (value < 100) text = 'Normal';
-        else if (value < 126) text = 'Elevated';
-        else text = 'High Risk';
+    function showModelSelection() {
+        document.getElementById('modelSelectionModal').style.display = 'flex';
+    }
+
+    function closeModelSelection() {
+        document.getElementById('modelSelectionModal').style.display = 'none';
+    }
+
+    function generatePrediction(model) {
+        // Close model selection
+        closeModelSelection();
         
-        document.getElementById('glucoseValue').textContent = value;
-        const elem = document.getElementById('glucoseStatus');
-        elem.textContent = text;
-        elem.style.backgroundColor = getStatusColor(text) + '20';
-        elem.style.color = getStatusColor(text);
+        // For now, redirect to 503 error (model not implemented yet)
+        window.location.href = '/error/503';
     }
-
-    function updateHba1cStatus(value) {
-        let text = '';
-        if (value < 5.7) text = 'Normal';
-        else if (value < 6.5) text = 'Prediabetic';
-        else text = 'Diabetic';
-        
-        document.getElementById('hba1cValue').textContent = value.toFixed(1);
-        const elem = document.getElementById('hba1cStatus');
-        elem.textContent = text;
-        elem.style.backgroundColor = getStatusColor(text) + '20';
-        elem.style.color = getStatusColor(text);
-    }
-
-    function updateCholesterolStatus(value) {
-        let text = '';
-        if (value < 200) text = 'Desirable';
-        else if (value < 240) text = 'Borderline';
-        else text = 'High';
-        
-        document.getElementById('cholesterolValue').textContent = value;
-        const elem = document.getElementById('cholesterolStatus');
-        elem.textContent = text;
-        elem.style.backgroundColor = getStatusColor(text) + '20';
-        elem.style.color = getStatusColor(text);
-    }
-
-    function updateSystolicStatus(value) {
-        let text = '';
-        if (value < 120) text = 'Normal';
-        else if (value < 140) text = 'Elevated';
-        else text = 'High Risk';
-        
-        document.getElementById('systolicValue').textContent = value;
-        const elem = document.getElementById('systolicStatus');
-        elem.textContent = text;
-        elem.style.backgroundColor = getStatusColor(text) + '20';
-        elem.style.color = getStatusColor(text);
-    }
-
-    function updateHeartRateStatus(value) {
-        let text = '';
-        if (value < 100) text = 'Low';
-        else if (value < 160) text = 'Normal';
-        else text = 'High';
-        
-        document.getElementById('heartRateValue').textContent = value;
-        const elem = document.getElementById('heartRateStatus');
-        elem.textContent = text;
-        elem.style.backgroundColor = getStatusColor(text) + '20';
-        elem.style.color = getStatusColor(text);
-    }
-
-    function generatePrediction() {
-        const age = parseInt(document.getElementById('age').value);
-        const height = parseInt(document.getElementById('height').value);
-        const weight = parseFloat(document.getElementById('weight').value);
-        const glucose = parseInt(document.getElementById('glucose').value);
-        const hba1c = parseFloat(document.getElementById('hba1c').value);
-        const cholesterol = parseInt(document.getElementById('cholesterol').value);
-        const systolic = parseInt(document.getElementById('systolic').value);
-        const heartRate = parseInt(document.getElementById('heartRate').value);
-
-        const bmi = weight / ((height / 100) * (height / 100));
-
-        // CVD Risk Calculation
-        let cvdScore = 0;
-        if (age > 55) cvdScore += 2;
-        else if (age > 45) cvdScore += 1;
-        if (bmi > 30) cvdScore += 2;
-        else if (bmi > 25) cvdScore += 1;
-        if (systolic > 140) cvdScore += 3;
-        else if (systolic > 130) cvdScore += 2;
-        else if (systolic > 120) cvdScore += 1;
-        if (cholesterol > 240) cvdScore += 3;
-        else if (cholesterol > 200) cvdScore += 1;
-        if (heartRate < 100) cvdScore += 2;
-        else if (heartRate < 120) cvdScore += 1;
-
-        let cvdRisk = 'Low';
-        if (cvdScore >= 8) cvdRisk = 'High';
-        else if (cvdScore >= 4) cvdRisk = 'Medium';
-
-        const cvdScorePercent = Math.min((cvdScore / 11) * 100, 100);
-
-        // Display results in modal
-        document.getElementById('cvdRisk').textContent = cvdRisk;
-        document.getElementById('cvdRisk').className = 'risk-badge ' + cvdRisk.toLowerCase();
-        document.getElementById('cvdScore').textContent = cvdScorePercent.toFixed(1) + '%';
-        document.getElementById('cvdProgress').style.width = cvdScorePercent + '%';
-        document.getElementById('cvdProgress').className = 'progress-fill ' + cvdRisk.toLowerCase();
-        document.getElementById('cvdConfidence').textContent = (85 + Math.random() * 10).toFixed(1);
-
-        // Show modal
-        document.getElementById('resultsModal').style.display = 'flex';
-    }
-
-    function closeResultsModal() {
-        document.getElementById('resultsModal').style.display = 'none';
-    }
-
-    // Close modal when pressing Escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeResultsModal();
-        }
-    });
 
     // Event listeners
-    document.getElementById('age').addEventListener('change', updateAllValues);
-    document.getElementById('height').addEventListener('change', updateAllValues);
-    document.getElementById('weight').addEventListener('change', updateAllValues);
-    document.getElementById('glucose').addEventListener('input', () => updateGlucoseStatus(parseInt(document.getElementById('glucose').value)));
-    document.getElementById('hba1c').addEventListener('input', () => updateHba1cStatus(parseFloat(document.getElementById('hba1c').value)));
-    document.getElementById('cholesterol').addEventListener('input', () => updateCholesterolStatus(parseInt(document.getElementById('cholesterol').value)));
-    document.getElementById('systolic').addEventListener('input', () => updateSystolicStatus(parseInt(document.getElementById('systolic').value)));
-    document.getElementById('heartRate').addEventListener('input', () => updateHeartRateStatus(parseInt(document.getElementById('heartRate').value)));
+    document.getElementById('height').addEventListener('input', updateAllValues);
+    document.getElementById('weight').addEventListener('input', updateAllValues);
 
     // Set current date
     document.getElementById('currentDate').textContent = new Date().toLocaleDateString();

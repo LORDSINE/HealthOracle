@@ -18,7 +18,9 @@ from dotenv import load_dotenv
 # Import all route functions from modular files
 from database import init_db
 from auth import login, auth_google, signup, google_link, google_success, signup_success
-from user_routes import dashboard, profile, dataset, prediction, logout
+from user_routes import (dashboard, profile, dataset, prediction, eda, logout,
+                         eda_overview, eda_target, eda_numerical, eda_categorical,
+                         eda_correlation, eda_risk, eda_stats)
 from password_reset import forgot_password
 
 # Load environment variables from .env if present
@@ -59,8 +61,25 @@ app.add_url_rule('/forgot', 'forgot_password', forgot_password, methods=['GET', 
 app.add_url_rule('/dashboard', 'dashboard', dashboard)
 app.add_url_rule('/profile', 'profile', profile, methods=['GET', 'POST'])
 app.add_url_rule('/dataset', 'dataset', dataset)
+app.add_url_rule('/eda', 'eda', eda)
 app.add_url_rule('/prediction', 'prediction', prediction)
 app.add_url_rule('/logout', 'logout', logout)
+
+# EDA API Endpoints
+app.add_url_rule('/api/eda/overview', 'eda_overview', eda_overview)
+app.add_url_rule('/api/eda/target', 'eda_target', eda_target)
+app.add_url_rule('/api/eda/numerical', 'eda_numerical', eda_numerical)
+app.add_url_rule('/api/eda/categorical', 'eda_categorical', eda_categorical)
+app.add_url_rule('/api/eda/correlation', 'eda_correlation', eda_correlation)
+app.add_url_rule('/api/eda/risk', 'eda_risk', eda_risk)
+app.add_url_rule('/api/eda/stats', 'eda_stats', eda_stats)
+
+# Error route for model not implemented
+@app.route('/error/503')
+def trigger_503():
+    """Trigger 503 error for model not implemented."""
+    from flask import abort
+    abort(503)
 
 # ============================================================================
 # ERROR HANDLERS
@@ -96,4 +115,4 @@ def service_unavailable(e):
 # ============================================================================
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)

@@ -2,17 +2,19 @@
 
 {% block title %}503 - Service Unavailable | Health Oracle{% endblock %}
 
+{% block sidebar %}{% endblock %}
+
 {% block content %}
 <div class="error-container">
     <div class="error-content">
         <div class="error-code">503</div>
-        <h1 class="error-title">Service Unavailable</h1>
+        <h1 class="error-title">Model Not Available</h1>
         <p class="error-message">
-            The service is temporarily unavailable. We're performing maintenance or experiencing high load. Please try again in a few moments.
+            The prediction model is currently under development. We're working on implementing the machine learning models for accurate health risk predictions. Please check back later.
         </p>
         <div class="error-actions">
-            <button onclick="location.reload()" class="btn btn-primary">Try Again</button>
-            <a href="/" class="btn btn-secondary">Go to Home</a>
+            <a href="/prediction" class="btn btn-primary">Back to Prediction</a>
+            <a href="/dashboard" class="btn btn-secondary">Go to Dashboard</a>
         </div>
     </div>
 </div>
