@@ -13,15 +13,15 @@
 {% block content %}
 <div class="eda-wrapper">
     <!-- Header -->
-    <div style="margin-bottom: 2rem;">
-        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Exploratory Data Analysis</h1>
-        <p style="color: #666;">Comprehensive analysis of the health dataset</p>
+    <div class="eda-header">
+        <h1>Exploratory Data Analysis</h1>
+        <p>Comprehensive analysis of the health dataset</p>
     </div>
 
     <!-- Dataset Overview Card -->
     <div class="content-card" style="margin-bottom: 2rem;">
         <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">📊 Dataset Overview</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+        <div class="stats-grid">
             <div class="stat-box">
                 <div class="stat-label">Total Records</div>
                 <div class="stat-value">Loading...</div>
@@ -33,7 +33,7 @@
             <div class="stat-box">
                 <div class="stat-label">Target Variable</div>
                 <div class="stat-value" style="font-size: 1.2rem; word-break: break-word;">Heart Disease</div>
-                <div style="font-size: 0.75rem; color: #666; margin-top: 0.25rem;">(HeartDiseaseorAttack)</div>
+                <div class="stat-subtitle">(HeartDiseaseorAttack)</div>
             </div>
             <div class="stat-box">
                 <div class="stat-label">Missing Values</div>
@@ -46,7 +46,7 @@
     <div class="content-card" style="margin-bottom: 2rem;">
         <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">🔍 Analysis Categories</h3>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+        <div class="analysis-grid">
             <div class="analysis-card">
                 <div class="analysis-icon">📈</div>
                 <h4>Target Distribution</h4>
@@ -100,171 +100,22 @@
     </div>
 
     <!-- Run Full Analysis Button -->
-    <div style="text-align: center; margin: 2rem 0;">
-        <button class="btn btn-primary" onclick="runFullAnalysis()" style="padding: 0.75rem 2.5rem; font-size: 1rem;">
+    <div class="eda-action-center">
+        <button class="btn btn-gradient" onclick="runFullAnalysis()" style="padding: 0.75rem 2.5rem; font-size: 1rem;">
             🚀 Run Full EDA Analysis
         </button>
-        <p style="color: #666; margin-top: 1rem; font-size: 0.9rem;">
-            This will execute the complete EDA pipeline and generate all visualizations
-        </p>
+        <p>This will execute the complete EDA pipeline and generate all visualizations</p>
     </div>
 
     <!-- Academic Note -->
-    <div class="content-card" style="background: #eff6ff; border: 1px solid #bfdbfe; margin-top: 2rem;">
-        <p style="color: #333; margin: 0;">
+    <div class="content-card eda-note" style="margin-top: 2rem;">
+        <p>
             <strong>📌 Note:</strong> This EDA analysis uses the health_data_clean(1).csv dataset. 
             The analysis includes distribution plots, correlation analysis, statistical tests, and risk factor assessment.
             All visualizations are generated using matplotlib, seaborn, and plotly libraries.
         </p>
     </div>
 </div>
-
-<style>
-.eda-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.stat-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    text-align: center;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-}
-
-.stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #1976d2;
-}
-
-.analysis-card {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: center;
-    transition: all 0.3s;
-}
-
-.analysis-card:hover {
-    border-color: #1976d2;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(25, 118, 210, 0.15);
-}
-
-.analysis-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.analysis-card h4 {
-    font-size: 1.1rem;
-    color: #333;
-    margin: 0.5rem 0;
-}
-
-.analysis-card p {
-    font-size: 0.875rem;
-    color: #666;
-    margin: 0.5rem 0 1rem 0;
-    line-height: 1.5;
-}
-
-.btn-analysis {
-    background: #1976d2;
-    color: white;
-    border: none;
-    padding: 0.5rem 1.5rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-analysis:hover {
-    background: #1565c0;
-    transform: scale(1.05);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-}
-
-.stats-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-}
-
-.stats-table thead {
-    background: #f8fafc;
-}
-
-.stats-table th,
-.stats-table td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.stats-table th {
-    font-weight: 600;
-    color: #333;
-    font-size: 0.875rem;
-}
-
-.stats-table td {
-    font-size: 0.875rem;
-    color: #666;
-}
-
-.stats-table tr:hover {
-    background: #f8fafc;
-}
-
-.spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #1976d2;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.error-message {
-    background: #fee;
-    border: 1px solid #fcc;
-    color: #c33;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-}
-</style>
 
 <script>
 // Load dataset overview on page load
@@ -339,20 +190,121 @@ function displayResults(data, title, section) {
     const contentDiv = document.getElementById('resultsContent');
     let html = `<h3 style="margin-bottom: 1.5rem;">${title}</h3>`;
     
-    // Display statistics if available
+    // Handle numerical section separately (new structure)
+    if (section === 'numerical' && data.stats_summary) {
+        // Section 1: Statistical Summary Table
+        html += `
+            <div class="eda-section">
+                <h4 class="section-title">📊 Section 1: Statistical Summary</h4>
+                <p class="section-desc">Central tendency and variability of numerical health indicators.</p>
+                <div class="table-responsive">
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Mean</th>
+                                <th>Median</th>
+                                <th>Std Dev</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                                <th>Skewness</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        `;
+        data.stats_summary.forEach(item => {
+            html += `
+                <tr>
+                    <td><strong>${item.feature}</strong></td>
+                    <td>${item.mean}</td>
+                    <td>${item.median}</td>
+                    <td>${item.std}</td>
+                    <td>${item.min}</td>
+                    <td>${item.max}</td>
+                    <td>${item.skewness}</td>
+                </tr>
+            `;
+        });
+        html += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        
+        // Section 2: Distribution Plots
+        html += `
+            <div class="eda-section">
+                <h4 class="section-title">📈 Section 2: Distribution Analysis</h4>
+                <p class="section-desc">Histogram with KDE showing distribution of key features (BMI, Age, General Health). Red dashed line = Mean, Green solid line = Median.</p>
+                <div class="chart-container">
+                    <img src="${data.charts.distribution}" alt="Distribution Plots" />
+                </div>
+            </div>
+        `;
+        
+        // Section 3: Outlier Detection
+        html += `
+            <div class="eda-section">
+                <h4 class="section-title">🔍 Section 3: Outlier Detection</h4>
+                <p class="section-desc">Boxplots reveal outliers and skewness, important for model robustness. Percentage shows outlier proportion in each feature.</p>
+                <div class="chart-container">
+                    <img src="${data.charts.outliers}" alt="Outlier Detection" />
+                </div>
+            </div>
+        `;
+        
+        // Section 4: Numerical Features vs Target
+        html += `
+            <div class="eda-section">
+                <h4 class="section-title">🎯 Section 4: Features vs Heart Disease</h4>
+                <p class="section-desc">Violin plots show distribution and density comparison between patients with and without heart disease. This is the most important analysis for understanding feature impact.</p>
+                <div class="chart-container">
+                    <img src="${data.charts.vs_target}" alt="Features vs Target" />
+                </div>
+            </div>
+        `;
+        
+        // Section 5: Correlation with Target
+        html += `
+            <div class="eda-section">
+                <h4 class="section-title">📊 Section 5: Correlation with Target</h4>
+                <p class="section-desc">Correlation analysis identifies the most influential numerical predictors. Red bars = positive correlation (increases risk), Green bars = negative correlation (decreases risk).</p>
+                <div class="chart-container">
+                    <img src="${data.charts.correlation}" alt="Correlation Analysis" />
+                </div>
+                <div class="correlation-summary">
+                    <h5>Top Correlations:</h5>
+                    <div class="correlation-badges">
+        `;
+        data.correlations.slice(0, 5).forEach(item => {
+            const colorClass = item.correlation > 0 ? 'positive' : 'negative';
+            html += `<span class="corr-badge ${colorClass}">${item.feature}: ${item.correlation}</span>`;
+        });
+        html += `
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        contentDiv.innerHTML = html;
+        return;
+    }
+    
+    // Display statistics if available (for other sections)
     if (data.stats) {
         html += '<div class="stats-container">';
         
         if (section === 'target') {
             html += `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div class="stats-grid" style="margin-bottom: 2rem;">
                     <div class="stat-box">
                         <div class="stat-label">No Disease</div>
                         <div class="stat-value">${data.stats.no_disease.toLocaleString()} (${data.stats.no_disease_pct}%)</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-label">Disease</div>
-                        <div class="stat-value" style="color: #ef4444;">${data.stats.disease.toLocaleString()} (${data.stats.disease_pct}%)</div>
+                        <div class="stat-value stat-value--danger">${data.stats.disease.toLocaleString()} (${data.stats.disease_pct}%)</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-label">Imbalance Ratio</div>
@@ -360,19 +312,6 @@ function displayResults(data, title, section) {
                     </div>
                 </div>
             `;
-        } else if (section === 'numerical') {
-            html += '<table class="stats-table"><thead><tr><th>Feature</th><th>Mean</th><th>Median</th><th>Std</th><th>Skewness</th><th>Kurtosis</th></tr></thead><tbody>';
-            for (const [feature, stats] of Object.entries(data.stats)) {
-                html += `<tr>
-                    <td><strong>${feature}</strong></td>
-                    <td>${stats.mean}</td>
-                    <td>${stats.median}</td>
-                    <td>${stats.std}</td>
-                    <td>${stats.skewness}</td>
-                    <td>${stats.kurtosis}</td>
-                </tr>`;
-            }
-            html += '</tbody></table>';
         } else if (section === 'categorical') {
             html += '<table class="stats-table"><thead><tr><th>Feature</th><th>No (0)</th><th>Yes (1)</th></tr></thead><tbody>';
             data.stats.forEach(item => {
@@ -404,8 +343,8 @@ function displayResults(data, title, section) {
         html += '<table class="stats-table"><thead><tr><th>Feature</th><th>Correlation</th></tr></thead><tbody>';
         data.top_correlations.features.slice(0, 10).forEach((feature, idx) => {
             const value = data.top_correlations.values[idx];
-            const color = value > 0 ? 'color: #ef4444;' : 'color: #10b981;';
-            html += `<tr><td><strong>${feature}</strong></td><td style="${color}">${value}</td></tr>`;
+            const colorClass = value > 0 ? 'correlation-positive' : 'correlation-negative';
+            html += `<tr><td><strong>${feature}</strong></td><td class="${colorClass}">${value}</td></tr>`;
         });
         html += '</tbody></table></div>';
     }
@@ -429,12 +368,12 @@ function displayResults(data, title, section) {
     
     // Display charts (can be single chart or array of charts)
     if (data.chart) {
-        html += '<div style="margin-top: 2rem;"><img src="' + data.chart + '" style="max-width: 100%; height: auto;" /></div>';
+        html += '<div class="chart-container"><img src="' + data.chart + '" /></div>';
     }
     
     if (data.charts && Array.isArray(data.charts)) {
         data.charts.forEach((chart, idx) => {
-            html += '<div style="margin-top: 2rem;"><img src="' + chart + '" style="max-width: 100%; height: auto;" /></div>';
+            html += '<div class="chart-container"><img src="' + chart + '" /></div>';
         });
     }
     
