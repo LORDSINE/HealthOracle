@@ -15,29 +15,41 @@
     <!-- Header -->
     <div class="eda-header">
         <h1>Exploratory Data Analysis</h1>
-        <p>Comprehensive analysis of the health dataset</p>
+        <p>Comprehensive analysis of the BRFSS Health Survey dataset for Heart Disease prediction</p>
     </div>
 
     <!-- Dataset Overview Card -->
     <div class="content-card" style="margin-bottom: 2rem;">
-        <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">📊 Dataset Overview</h3>
+        <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">📋 Dataset Overview</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">Understanding the structure and composition of our dataset.</p>
         <div class="stats-grid">
             <div class="stat-box">
-                <div class="stat-label">Total Records</div>
-                <div class="stat-value">Loading...</div>
+                <div class="stat-label">Samples</div>
+                <div class="stat-value" id="total-records">Loading...</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">Features</div>
-                <div class="stat-value">Loading...</div>
+                <div class="stat-label">Total Features</div>
+                <div class="stat-value" id="total-features">Loading...</div>
             </div>
             <div class="stat-box">
                 <div class="stat-label">Target Variable</div>
-                <div class="stat-value" style="font-size: 1.2rem; word-break: break-word;">Heart Disease</div>
-                <div class="stat-subtitle">(HeartDiseaseorAttack)</div>
+                <div class="stat-value" style="font-size: 1rem;">HeartDiseaseorAttack</div>
             </div>
             <div class="stat-box">
                 <div class="stat-label">Missing Values</div>
-                <div class="stat-value">Loading...</div>
+                <div class="stat-value" id="missing-values">Loading...</div>
+            </div>
+        </div>
+        
+        <!-- Feature Types -->
+        <div style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                <h5 style="margin: 0 0 0.5rem 0; color: #3b82f6;">🔢 Numerical Features (7)</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #666;">BMI, Age, GenHlth, MentHlth, PhysHlth, Education, Income</p>
+            </div>
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #10b981;">
+                <h5 style="margin: 0 0 0.5rem 0; color: #10b981;">⚡ Binary Features (8)</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #666;">HighBP, HighChol, Smoker, PhysActivity, DiffWalk, Sex, Diabetes, Stroke</p>
             </div>
         </div>
     </div>
@@ -49,43 +61,43 @@
         <div class="analysis-grid">
             <div class="analysis-card">
                 <div class="analysis-icon">📈</div>
-                <h4>Target Distribution</h4>
-                <p>Heart disease class balance and distribution analysis</p>
+                <h4>Target Distribution & Class Imbalance</h4>
+                <p>Heart disease class balance, imbalance ratio, and modeling implications</p>
                 <button class="btn-analysis" onclick="showSection('target')">View Analysis</button>
             </div>
 
             <div class="analysis-card">
                 <div class="analysis-icon">📊</div>
-                <h4>Numerical Features</h4>
-                <p>Distribution, statistics, and outlier detection</p>
+                <h4>Numerical Features Analysis</h4>
+                <p>Statistics, distributions, outliers, and correlations with target</p>
                 <button class="btn-analysis" onclick="showSection('numerical')">View Analysis</button>
             </div>
 
             <div class="analysis-card">
                 <div class="analysis-icon">🎯</div>
-                <h4>Categorical Features</h4>
-                <p>Binary and categorical variable distributions</p>
+                <h4>Categorical/Binary Features</h4>
+                <p>Binary variable distributions and disease rates by category</p>
                 <button class="btn-analysis" onclick="showSection('categorical')">View Analysis</button>
             </div>
 
             <div class="analysis-card">
                 <div class="analysis-icon">🔗</div>
-                <h4>Correlations</h4>
-                <p>Feature relationships and correlation matrix</p>
-                <button class="btn-analysis" onclick="showSection('correlation')">View Analysis</button>
+                <h4>Feature Interactions</h4>
+                <p>Multi-feature relationships and grouped analysis</p>
+                <button class="btn-analysis" onclick="showSection('interactions')">View Analysis</button>
             </div>
 
             <div class="analysis-card">
                 <div class="analysis-icon">⚠️</div>
                 <h4>Risk Factor Analysis</h4>
-                <p>Multiple risk factors and disease rate analysis</p>
+                <p>Cumulative risk factors and disease probability</p>
                 <button class="btn-analysis" onclick="showSection('risk')">View Analysis</button>
             </div>
 
             <div class="analysis-card">
                 <div class="analysis-icon">🔬</div>
                 <h4>Statistical Tests</h4>
-                <p>Chi-square tests and significance analysis</p>
+                <p>Chi-square tests, p-values, and Cramer's V effect sizes</p>
                 <button class="btn-analysis" onclick="showSection('stats')">View Analysis</button>
             </div>
         </div>
@@ -99,20 +111,40 @@
         </div>
     </div>
 
-    <!-- Run Full Analysis Button -->
-    <div class="eda-action-center">
-        <button class="btn btn-gradient" onclick="runFullAnalysis()" style="padding: 0.75rem 2.5rem; font-size: 1rem;">
-            🚀 Run Full EDA Analysis
-        </button>
-        <p>This will execute the complete EDA pipeline and generate all visualizations</p>
+    <!-- Key EDA Insights -->
+    <div class="content-card" style="margin-bottom: 2rem;">
+        <h3 style="font-weight: 500; color: #333; margin-bottom: 1.5rem;">💡 Key EDA Insights</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">Summary of critical findings for modeling and interpretation.</p>
+        
+        <div style="display: grid; gap: 1rem;">
+            <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 1rem; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                <h5 style="margin: 0 0 0.5rem 0; color: #92400e;">⚠️ Class Imbalance</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #78350f;">~9:1 ratio requires techniques like SMOTE, class weights, or threshold tuning for effective modeling.</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 1rem; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                <h5 style="margin: 0 0 0.5rem 0; color: #1e40af;">📊 Top Predictors</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #1e3a8a;">GenHlth, HighBP, Age, DiffWalk, and HighChol show strongest associations with heart disease.</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); padding: 1rem; border-radius: 8px; border-left: 4px solid #10b981;">
+                <h5 style="margin: 0 0 0.5rem 0; color: #065f46;">✅ Data Quality</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #064e3b;">Dataset is clean with no missing values. Feature distributions are suitable for tree-based models.</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #fce7f3, #fbcfe8); padding: 1rem; border-radius: 8px; border-left: 4px solid #ec4899;">
+                <h5 style="margin: 0 0 0.5rem 0; color: #9d174d;">🔗 Feature Interactions</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #831843;">Multiple risk factors (HighBP + HighChol + Diabetes) show compound effect on disease risk.</p>
+            </div>
+        </div>
     </div>
 
     <!-- Academic Note -->
     <div class="content-card eda-note" style="margin-top: 2rem;">
         <p>
-            <strong>📌 Note:</strong> This EDA analysis uses the health_data_clean(1).csv dataset. 
+            <strong>📌 Note:</strong> This EDA analysis uses the health_dataset.csv dataset. 
             The analysis includes distribution plots, correlation analysis, statistical tests, and risk factor assessment.
-            All visualizations are generated using matplotlib, seaborn, and plotly libraries.
+            All visualizations are generated using matplotlib and seaborn libraries.
         </p>
     </div>
 </div>
@@ -127,9 +159,9 @@ function loadOverview() {
     fetch('/api/eda/overview')
         .then(response => response.json())
         .then(data => {
-            document.querySelectorAll('.stat-value')[0].textContent = data.total_records.toLocaleString();
-            document.querySelectorAll('.stat-value')[1].textContent = data.features;
-            document.querySelectorAll('.stat-value')[3].textContent = data.missing_values;
+            document.getElementById('total-records').textContent = data.total_records.toLocaleString();
+            document.getElementById('total-features').textContent = data.features;
+            document.getElementById('missing-values').textContent = data.missing_values.toLocaleString();
         })
         .catch(error => {
             console.error('Error loading overview:', error);
@@ -152,27 +184,27 @@ function showSection(section) {
     switch(section) {
         case 'target':
             endpoint = '/api/eda/target';
-            title = '📈 Target Distribution Analysis';
+            title = '📈 Section 2 & 3: Target Distribution & Class Imbalance';
             break;
         case 'numerical':
             endpoint = '/api/eda/numerical';
-            title = '📊 Numerical Features Analysis';
+            title = '📊 Section 4: Numerical Features Analysis';
             break;
         case 'categorical':
             endpoint = '/api/eda/categorical';
-            title = '🎯 Categorical Features Analysis';
+            title = '🎯 Section 5: Categorical/Binary Features';
             break;
-        case 'correlation':
-            endpoint = '/api/eda/correlation';
-            title = '🔗 Correlation Analysis';
+        case 'interactions':
+            endpoint = '/api/eda/interactions';
+            title = '🔗 Section 6: Feature Interaction Analysis';
             break;
         case 'risk':
             endpoint = '/api/eda/risk';
-            title = '⚠️ Risk Factor Analysis';
+            title = '⚠️ Section 7: Risk Factor Analysis';
             break;
         case 'stats':
             endpoint = '/api/eda/stats';
-            title = '🔬 Statistical Tests';
+            title = '🔬 Section 8: Statistical Tests';
             break;
     }
     
@@ -371,6 +403,19 @@ function displayResults(data, title, section) {
         html += '<div class="chart-container"><img src="' + data.chart + '" /></div>';
     }
     
+    // Handle interactions section
+    if (section === 'interactions' && data.chart) {
+        html += `
+            <div class="eda-section">
+                <h4 style="margin-bottom: 1rem;">Feature Interaction Visualizations</h4>
+                <p style="color: #666; margin-bottom: 1rem;">These plots show how combinations of features relate to heart disease risk.</p>
+                <div class="chart-container"><img src="${data.chart}" alt="Feature Interactions" /></div>
+            </div>
+        `;
+        contentDiv.innerHTML = html;
+        return;
+    }
+    
     if (data.charts && Array.isArray(data.charts)) {
         data.charts.forEach((chart, idx) => {
             html += '<div class="chart-container"><img src="' + chart + '" /></div>';
@@ -378,23 +423,6 @@ function displayResults(data, title, section) {
     }
     
     contentDiv.innerHTML = html;
-}
-
-function runFullAnalysis() {
-    if (confirm('This will load all analysis sections one by one. Continue?')) {
-        const sections = ['target', 'numerical', 'categorical', 'correlation', 'risk', 'stats'];
-        let index = 0;
-        
-        function loadNext() {
-            if (index < sections.length) {
-                showSection(sections[index]);
-                index++;
-                setTimeout(loadNext, 1000);
-            }
-        }
-        
-        loadNext();
-    }
 }
 </script>
 {% endblock %}
