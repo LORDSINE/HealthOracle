@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Modeling - Health Oracle{% endblock %}
+
+{% block page_class %}dashboard-layout{% endblock %}
+
+{% block nav_modeling %}active{% endblock %}
+
+{% block user_avatar %}{{ user_name[0] if user_name else 'U' }}{% endblock %}
+{% block user_name %}{{ user_name or 'User' }}{% endblock %}
+{% block user_id %}{{ user_id }}{% endblock %}
+
+{% block content %}
+<div class="modeling-container">
+    <div class="modeling-header">
+        <h1>Modeling Approach</h1>
+        <p>Understanding the algorithms used for prediction</p>
+    </div>
+
+    <!-- Overview Card -->
+    <div class="info-card highlight-card">
+        <p>Multiple models are evaluated and compared to understand their effectiveness on health prediction tasks. Each model offers different strengths for binary classification problems.</p>
+    </div>
+
+    <!-- Algorithms Section -->
+    <div class="section-card">
+        <h2>Algorithms</h2>
+        <div class="algo-grid">
+            <div class="algo-card">
+                <h3>Logistic Regression</h3>
+                <p>Linear model for binary classification with probability outputs. Fast training and interpretable coefficients.</p>
+                <div class="algo-tags">
+                    <span class="tag tag-green">Active</span>
+                    <span class="tag">Balanced Classes</span>
+                </div>
+            </div>
+            
+            <div class="algo-card">
+                <h3>Random Forest</h3>
+                <p>Ensemble of decision trees using bootstrap aggregation. Handles non-linear relationships and feature importance.</p>
+                <div class="algo-tags">
+                    <span class="tag tag-green">Active</span>
+                    <span class="tag">100 Trees</span>
+                </div>
+            </div>
+            
+            <div class="algo-card">
+                <h3>Support Vector Machine (SVM)</h3>
+                <p>Finds optimal hyperplane to separate classes using kernel methods. RBF kernel for non-linear boundaries.</p>
+                <div class="algo-tags">
+                    <span class="tag tag-yellow">Training Required</span>
+                    <span class="tag">RBF Kernel</span>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+
+    <!-- Feature Selection Section -->
+    <div class="section-card">
+        <h2>Feature Selection</h2>
+        <p class="section-desc">Techniques to identify most relevant features for prediction</p>
+        
+        <div class="feature-grid">
+            <div class="feature-item">
+                <h4>Selected Features (11)</h4>
+                <div class="feature-list">
+                    <span class="feature-tag">HighBP</span>
+                    <span class="feature-tag">HighChol</span>
+                    <span class="feature-tag">BMI</span>
+                    <span class="feature-tag">Smoker</span>
+                    <span class="feature-tag">PhysActivity</span>
+                    <span class="feature-tag">GenHlth</span>
+                    <span class="feature-tag">MentHlth</span>
+                    <span class="feature-tag">PhysHlth</span>
+                    <span class="feature-tag">DiffWalk</span>
+                    <span class="feature-tag">Sex</span>
+                    <span class="feature-tag">Age</span>
+                </div>
+            </div>
+            <div class="feature-methods">
+                <span class="method-tag">Correlation Analysis</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evaluation Metrics Section -->
+    <div class="section-card">
+        <h2>Evaluation Metrics</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h4>Accuracy</h4>
+                <p>Overall correct predictions</p>
+            </div>
+            <div class="metric-card">
+                <h4>Precision</h4>
+                <p>True positives ratio</p>
+            </div>
+            <div class="metric-card">
+                <h4>Recall</h4>
+                <p>Sensitivity to positives</p>
+            </div>
+            <div class="metric-card">
+                <h4>F1-Score</h4>
+                <p>Harmonic mean balance</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Training Workflow Section -->
+    <div class="section-card">
+        <h2>Training Workflow</h2>
+        <div class="workflow-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Data Preprocessing</h4>
+                    <p>Handle missing values, encode categorical variables, scale features</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Train-Test Split</h4>
+                    <p>80% training, 20% testing with stratified sampling</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Class Balancing</h4>
+                    <p>Apply balanced class weights to handle 9:1 imbalance ratio</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Model Training</h4>
+                    <p>Train multiple models with optimized hyperparameters</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Evaluation</h4>
+                    <p>Compare performance and select best model for deployment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Comparison Section -->
+    <div class="section-card">
+        <h2>Model Comparison</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Training Time</th>
+                        <th>Interpretability</th>
+                        <th>Handles Imbalance</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Logistic Regression</strong></td>
+                        <td>Fast</td>
+                        <td>High</td>
+                        <td>Yes (class_weight)</td>
+                        <td><span class="status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Forest</strong></td>
+                        <td>Medium</td>
+                        <td>Medium</td>
+                        <td>Yes (balanced)</td>
+                        <td><span class="status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>SVM</strong></td>
+                        <td>Slow</td>
+                        <td>Low</td>
+                        <td>Yes (balanced)</td>
+                        <td><span class="status-pending">Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="action-buttons" style="margin-top: 2rem;">
+        <a href="{{ url_for('prediction') }}" class="btn btn-primary">
+            Try Prediction
+        </a>
+        <a href="{{ url_for('eda') }}" class="btn btn-secondary">
+            View EDA
+        </a>
+    </div>
+</div>
+
+<div class="disclaimer">
+    <strong>Disclaimer:</strong> This application is developed for academic and research purposes only. It does not replace professional medical advice.
+</div>
+{% endblock %}
