@@ -36,52 +36,39 @@
         </div>
     </div>
 
+    <!-- Prediction History Section -->
     <div class="profile-card">
-        <h2>Account Settings</h2>
+        <h2>Prediction History</h2>
+        <p style="color: #666; margin-bottom: 1rem;">Your recent health risk predictions</p>
         
-        <button class="btn-settings" onclick="togglePasswordForm()">
-            <span>🔐</span> Change Password
-        </button>
-        
-        <div id="password-form" class="password-form" style="display: none; margin-top: 1.5rem;">
-            <form method="POST" action="{{ url_for('profile') }}" id="changePasswordForm">
-                <label class="field">
-                    <span class="field__label">Current Password</span>
-                    <input class="field__input" type="password" name="current_password" placeholder="Enter your current password" required>
-                </label>
-
-                <label class="field">
-                    <span class="field__label">New Password</span>
-                    <input class="field__input" type="password" name="new_password" placeholder="Enter new password" required>
-                </label>
-
-                <label class="field">
-                    <span class="field__label">Confirm New Password</span>
-                    <input class="field__input" type="password" name="confirm_password" placeholder="Confirm new password" required>
-                </label>
-
-                {% if password_error %}
-                <div class="alert alert--error" role="alert">{{ password_error }}</div>
-                {% endif %}
-
-                {% if password_success %}
-                <div class="alert alert--success" role="status">{{ password_success }}</div>
-                {% endif %}
-
-                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">Update Password</button>
-                    <button type="button" class="btn btn-ghost" style="flex: 1;" onclick="togglePasswordForm()">Cancel</button>
+        {% if predictions and predictions|length > 0 %}
+        <div class="prediction-history">
+            {% for pred in predictions %}
+            <div class="prediction-item" style="background: {% if pred.risk_level == 'High Risk' %}#fee2e2{% elif pred.risk_level == 'Medium Risk' %}#fef3c7{% else %}#dcfce7{% endif %}; border-left: 4px solid {% if pred.risk_level == 'High Risk' %}#ef4444{% elif pred.risk_level == 'Medium Risk' %}#f59e0b{% else %}#22c55e{% endif %};">
+                <div class="pred-header">
+                    <span class="pred-date">{{ pred.created_at }}</span>
+                    <span class="pred-model">{{ pred.model_used }}</span>
                 </div>
-            </form>
+                <div class="pred-result">
+                    <strong>{{ pred.risk_level }}</strong> - {{ pred.probability }}% probability
+                </div>
+            </div>
+            {% endfor %}
         </div>
+        {% else %}
+        <div style="text-align: center; padding: 2rem; color: #666;">
+            <p style="font-size: 2rem; margin-bottom: 0.5rem;">--</p>
+            <p>No predictions yet</p>
+            <a href="{{ url_for('prediction') }}" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Make Your First Prediction</a>
+        </div>
+        {% endif %}
     </div>
 
     <div class="profile-card">
-        <h2>Danger Zone</h2>
-        <p style="color: #666; margin-bottom: 1.5rem;">These actions cannot be undone</p>
-        
+        <h2>Account Actions</h2>
+
         <button class="btn-danger" onclick="if(confirm('Are you sure you want to logout?')) { window.location.href='{{ url_for('logout') }}'; }">
-            <span>↪</span> Logout
+            Logout
         </button>
     </div>
 </div>
@@ -189,15 +176,35 @@
     background: #b71c1c;
 }
 
-.password-form {
-    border-top: 1px solid #e0e0e0;
-    padding-top: 1.5rem;
+.prediction-history {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-.alert--success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+.prediction-item {
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.pred-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.pred-model {
+    background: rgba(0,0,0,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.pred-result {
+    font-size: 1rem;
+    color: #333;
 }
 
 .field {
@@ -227,11 +234,4 @@
     box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.12);
 }
 </style>
-
-<script>
-    function togglePasswordForm() {
-        const form = document.getElementById('password-form');
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-</script>
 {% endblock %}
