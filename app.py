@@ -1,51 +1,28 @@
-"""Health Oracle Flask Application - Modular Structure
-
-This is the main Flask application entry point. All business logic has been
-organized into modular components for better maintainability.
-
-Modules:
-- database.py: Database operations and user management
-- email_service.py: Email sending functionality (OTP delivery)
-- auth.py: Authentication routes (login, signup, Google OAuth)
-- user_routes.py: User management routes (dashboard, profile, prediction, etc.)
-- password_reset.py: Password reset functionality with OTP verification
-"""
-
 import os
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, abort
 from dotenv import load_dotenv
-
-# Import all route functions from modular files
 from database import init_db
 from auth import login, auth_google, signup, google_link, google_success, signup_success
-from user_routes import (dashboard, profile, dataset, prediction, eda, logout,
-                         eda_overview, eda_target, eda_numerical, eda_categorical,
-                         eda_correlation, eda_risk, eda_stats, eda_interactions)
+from user_routes import (
+    dashboard, profile, dataset, prediction, logout, eda, predict_health_risk, modeling,
+    eda_overview, eda_target, eda_numerical, eda_categorical, eda_correlation, eda_risk, eda_stats, eda_interactions
+)
 from password_reset import forgot_password
 
-# Load environment variables from .env if present
 load_dotenv()
 
-# Initialize Flask application
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
-# Initialize database on startup
 init_db()
 
-# ============================================================================
-# HOME ROUTE
-# ============================================================================
 
 @app.route('/')
 def home():
     """Redirect to login page."""
     return redirect(url_for('login'))
 
-# ============================================================================
-# AUTHENTICATION ROUTES
-# ============================================================================
-
+# auth routes
 app.add_url_rule('/login', 'login', login, methods=['GET', 'POST'])
 app.add_url_rule('/auth/google', 'auth_google', auth_google, methods=['POST'])
 app.add_url_rule('/signup', 'signup', signup, methods=['GET', 'POST'])
@@ -54,15 +31,14 @@ app.add_url_rule('/google-link', 'google_link', google_link, methods=['GET', 'PO
 app.add_url_rule('/google-success/<user_id>', 'google_success', google_success)
 app.add_url_rule('/forgot', 'forgot_password', forgot_password, methods=['GET', 'POST'])
 
-# ============================================================================
-# USER ROUTES
-# ============================================================================
-
+# user routes
 app.add_url_rule('/dashboard', 'dashboard', dashboard)
-app.add_url_rule('/profile', 'profile', profile, methods=['GET', 'POST'])
+app.add_url_rule('/profile', 'profile', profile)
 app.add_url_rule('/dataset', 'dataset', dataset)
 app.add_url_rule('/eda', 'eda', eda)
+app.add_url_rule('/modeling', 'modeling', modeling)
 app.add_url_rule('/prediction', 'prediction', prediction)
+app.add_url_rule('/api/predict', 'predict_health_risk', predict_health_risk, methods=['POST'])
 app.add_url_rule('/logout', 'logout', logout)
 
 # EDA API Endpoints
@@ -111,9 +87,7 @@ def service_unavailable(e):
     """Handle 503 errors - Service Unavailable."""
     return render_template('errors/503.html'), 503
 
-# ============================================================================
-# APPLICATION ENTRY POINT
-# ============================================================================
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

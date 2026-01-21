@@ -89,3 +89,50 @@ def update_password(user_id, password_hash):
     conn.execute('UPDATE users SET password_hash = ? WHERE user_id = ?', (password_hash, user_id))
     conn.commit()
     conn.close()
+
+
+def init_predictions_table():
+    """Initialize predictions history table."""
+    conn = get_db()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS predictions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            model_used TEXT NOT NULL,
+            probability REAL NOT NULL,
+            risk_level TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (user_id)
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+
+def save_prediction(user_id, model_used, probability, risk_level):
+    """Save a prediction to history."""
+    init_predictions_table()
+    conn = get_db()
+    conn.execute(
+        'INSERT INTO predictions (user_id, model_used, probability, risk_level) VALUES (?, ?, ?, ?)',
+        (user_id, model_used, probability, risk_level)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_user_predictions(user_id, limit=10):
+    """Get prediction history for a user."""
+    init_predictions_table()
+    conn = get_db()
+    predictions = conn.execute(
+        '''SELECT model_used, probability, risk_level, 
+           strftime('%Y-%m-%d %H:%M', created_at) as created_at
+           FROM predictions 
+           WHERE user_id = ? 
+           ORDER BY created_at DESC 
+           LIMIT ?''',
+        (user_id, limit)
+    ).fetchall()
+    conn.close()
+    return [dict(p) for p in predictions]

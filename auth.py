@@ -119,12 +119,10 @@ def signup():
             valid_phone = False
             
             if country_code == '+977':
-                # Nepal: must be 10 digits starting with 97 or 98
                 valid_phone = len(digits_only) == 10 and (digits_only.startswith('97') or digits_only.startswith('98'))
                 if not valid_phone:
                     error = "Please enter a valid number."
             else:
-                # Other countries: basic 10+ digit validation
                 valid_phone = len(digits_only) >= 10
                 if not valid_phone:
                     error = "Please enter a valid phone number (at least 10 digits)."
