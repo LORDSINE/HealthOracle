@@ -34,7 +34,7 @@
             <a href="{{ url_for('eda') }}" class="nav-item {% block nav_eda %}{% endblock %}">
                 <span>📊</span> EDA
             </a>
-            <a href="#" class="nav-item">
+            <a href="{{ url_for('modeling') }}" class="nav-item {% block nav_modeling %}{% endblock %}">
                 <span>⚙</span> Modeling
             </a>
             <a href="{{ url_for('prediction') }}" class="nav-item {% block nav_prediction %}{% endblock %}">

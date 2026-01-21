@@ -180,6 +180,22 @@
                             <option value="1">Yes</option>
                         </select>
                     </div>
+
+                    <div class="metric-input">
+                        <label>Mental Health (days per month)</label>
+                        <div class="input-group">
+                            <input type="number" id="mentHlth" value="0" min="0" max="30" step="1">
+                            <span class="unit">days</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-input">
+                        <label>Physical Health (days per month)</label>
+                        <div class="input-group">
+                            <input type="number" id="physHlth" value="0" min="0" max="30" step="1">
+                            <span class="unit">days</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
@@ -203,13 +219,13 @@
             
             <div class="modal-body">
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
-                    <button onclick="generatePrediction('lr')" class="model-btn">
+                    <button onclick="generatePrediction('logistic_regression')" class="model-btn">
                         <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">📈</span>
                         <h3 style="margin: 0;">Logistic Regression</h3>
                         <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: #666;">Linear classification model</p>
                     </button>
                     
-                    <button onclick="generatePrediction('rf')" class="model-btn">
+                    <button onclick="generatePrediction('random_forest')" class="model-btn">
                         <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌳</span>
                         <h3 style="margin: 0;">Random Forest</h3>
                         <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: #666;">Ensemble learning method</p>
@@ -719,6 +735,17 @@
     }
 
     function showModelSelection() {
+        // Validate form before showing model selection
+        const requiredFields = ['age', 'sex', 'height', 'weight', 'highBP', 'highChol', 'smoker', 'genHlth', 'physActivity', 'diffWalk'];
+        
+        for (let field of requiredFields) {
+            const element = document.getElementById(field);
+            if (!element || element.value === '') {
+                alert('Please fill in all required fields');
+                return;
+            }
+        }
+        
         document.getElementById('modelSelectionModal').style.display = 'flex';
     }
 
@@ -726,12 +753,106 @@
         document.getElementById('modelSelectionModal').style.display = 'none';
     }
 
-    function generatePrediction(model) {
-        // Close model selection
+    function closeResultsModal() {
+        document.getElementById('resultsModal').style.display = 'none';
+    }
+
+    function collectFormData() {
+        const height = parseInt(document.getElementById('height').value);
+        const weight = parseFloat(document.getElementById('weight').value);
+        const heightInMeters = height / 100;
+        const bmi = weight / (heightInMeters * heightInMeters);
+        
+        return {
+            HighBP: parseInt(document.getElementById('highBP').value),
+            HighChol: parseInt(document.getElementById('highChol').value),
+            BMI: bmi,
+            Smoker: parseInt(document.getElementById('smoker').value),
+            PhysActivity: parseInt(document.getElementById('physActivity').value),
+            GenHlth: parseInt(document.getElementById('genHlth').value),
+            MentHlth: parseFloat(document.getElementById('mentHlth').value),
+            PhysHlth: parseFloat(document.getElementById('physHlth').value),
+            DiffWalk: parseInt(document.getElementById('diffWalk').value),
+            Sex: parseInt(document.getElementById('sex').value),
+            Age: parseInt(document.getElementById('age').value)
+        };
+    }
+
+    async function generatePrediction(model) {
         closeModelSelection();
         
-        // For now, redirect to 503 error (model not implemented yet)
-        window.location.href = '/error/503';
+        const formData = collectFormData();
+        formData.model = model;
+        
+        try {
+            const response = await fetch('/api/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                alert('Error: ' + (result.error || 'Prediction failed'));
+                return;
+            }
+            
+            displayResults(result);
+        } catch (error) {
+            alert('Error making prediction: ' + error.message);
+        }
+    }
+
+    function displayResults(result) {
+        const modelNames = {
+            'svm': 'Support Vector Machine',
+            'logistic_regression': 'Logistic Regression',
+            'random_forest': 'Random Forest'
+        };
+        
+        const modalBody = document.querySelector('#resultsModal .modal-body');
+        const riskColor = result.risk_level === 'High Risk' ? '#ef4444' : 
+                         result.risk_level === 'Medium Risk' ? '#f59e0b' : '#10b981';
+        
+        modalBody.innerHTML = `
+            <div style="text-align: center; padding: 2rem 0;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">
+                    ${result.has_heart_disease ? '⚠️' : '✅'}
+                </div>
+                
+                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #333;">
+                    ${result.risk_level}
+                </h3>
+                
+                <div style="background: ${riskColor}20; border-left: 4px solid ${riskColor}; padding: 1rem; margin: 1.5rem 0; border-radius: 4px;">
+                    <p style="margin: 0; color: #333; font-weight: 500;">
+                        Disease Probability: <strong>${(result.probability * 100).toFixed(1)}%</strong>
+                    </p>
+                </div>
+                
+                <div style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
+                    <p style="margin: 0; color: #666; font-size: 0.9rem;">
+                        <strong>Model Used:</strong> ${modelNames[result.model_used] || result.model_used}
+                    </p>
+                    <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">
+                        <strong>Class Probabilities:</strong><br>
+                        No Disease: ${(result.class_probabilities.no_disease * 100).toFixed(1)}%<br>
+                        Has Disease: ${(result.class_probabilities.has_disease * 100).toFixed(1)}%
+                    </p>
+                </div>
+                
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
+                    <p style="margin: 0; color: #333; font-size: 0.85rem;">
+                        <strong>⚕️ Disclaimer:</strong> This is an educational ML model. Real medical diagnosis requires consultation with healthcare professionals.
+                    </p>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('resultsModal').style.display = 'flex';
     }
 
     // Event listeners

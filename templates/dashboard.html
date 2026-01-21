@@ -15,8 +15,8 @@
     <h1>Health Oracle</h1>
     <p>Early Risk Prediction for Heart Disease and Diabetes using Machine Learning</p>
 
-    <!-- User Info Section -->
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 20px; margin-bottom: 20px; color: white;">
+    <!-- User Info Section with auto-hide -->
+    <div id="welcomeBanner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 20px; margin-bottom: 20px; color: white; transition: opacity 0.5s ease, max-height 0.5s ease; overflow: hidden;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h2 style="margin: 0 0 5px 0; font-size: 1.5rem;">Welcome, {{ user_name }}!</h2>
@@ -82,5 +82,31 @@
             alert('Failed to copy User ID');
         });
     }
+
+    // Check if welcome banner was already shown this session
+    (function() {
+        const banner = document.getElementById('welcomeBanner');
+        if (!banner) return;
+        
+        // If already shown this session, hide immediately
+        if (sessionStorage.getItem('welcomeShown')) {
+            banner.remove();
+            return;
+        }
+        
+        // Mark as shown for this session
+        sessionStorage.setItem('welcomeShown', 'true');
+        
+        // Auto-hide welcome banner after 6 seconds
+        setTimeout(() => {
+            banner.style.opacity = '0';
+            banner.style.maxHeight = '0';
+            banner.style.padding = '0';
+            banner.style.marginBottom = '0';
+            setTimeout(() => {
+                banner.remove();
+            }, 500);
+        }, 6000);
+    })();
 </script>
 {% endblock %}
