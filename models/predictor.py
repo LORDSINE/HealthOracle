@@ -11,6 +11,7 @@ from .logistic_regression_model import (
     get_feature_names as get_lr_features,
 )
 from .random_forest_model import get_random_forest_model, get_feature_names as get_rf_features
+from .svm_model import get_svm_model, get_feature_names as get_svm_features
 
 
 class ModelPredictor:
@@ -32,8 +33,10 @@ class ModelPredictor:
             model = get_logistic_regression_model()
         elif model_name == 'random_forest':
             model = get_random_forest_model()
+        elif model_name == 'svm':
+            model = get_svm_model()
         else:
-            raise ValueError(f"Unknown model: {model_name}. Available: logistic_regression, random_forest")
+            raise ValueError(f"Unknown model: {model_name}. Available: logistic_regression, random_forest, svm")
 
         self._models[model_name] = model
         return model
