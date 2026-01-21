@@ -6,7 +6,6 @@ warnings.filterwarnings('ignore')
 
 import pandas as pd
 import numpy as np
-from .svm_model import get_svm_model, get_feature_names as get_svm_features
 from .logistic_regression_model import (
     get_logistic_regression_model,
     get_feature_names as get_lr_features,
@@ -19,9 +18,9 @@ class ModelPredictor:
 
     def __init__(self):
         """Set up feature list and lazy model cache without loading models."""
-        # All three models share the same feature list
-        self.feature_names = get_svm_features()
-        # Cache for loaded models: {'svm': model, 'logistic_regression': model, 'random_forest': model}
+        # Use feature list from logistic regression (same for both models)
+        self.feature_names = get_lr_features()
+        # Cache for loaded models: {'logistic_regression': model, 'random_forest': model}
         self._models = {}
 
     def _get_model(self, model_name: str):
@@ -29,14 +28,12 @@ class ModelPredictor:
         if model_name in self._models:
             return self._models[model_name]
 
-        if model_name == 'svm':
-            model = get_svm_model()
-        elif model_name == 'logistic_regression':
+        if model_name == 'logistic_regression':
             model = get_logistic_regression_model()
         elif model_name == 'random_forest':
             model = get_random_forest_model()
         else:
-            raise ValueError(f"Unknown model: {model_name}")
+            raise ValueError(f"Unknown model: {model_name}. Available: logistic_regression, random_forest")
 
         self._models[model_name] = model
         return model

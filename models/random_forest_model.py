@@ -40,13 +40,13 @@ def get_random_forest_model():
     # Otherwise, train the model
     print("Training Random Forest model...")
     
-    # Load and prepare data
-    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'health_data_clean(1).csv')
+    # Load and prepare data (using normalized dataset)
+    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'health_data_ml_01.csv')
     df = pd.read_csv(data_path)
     
-    # Select only required features
+    # Select only required features (all values already normalized 0-1)
     feature_cols = ['HighBP', 'HighChol', 'BMI', 'Smoker', 'PhysActivity',
-                    'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age']
+                    'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age', 'Diabetes_binary']
     
     X = df[feature_cols]
     y = df['HeartDiseaseorAttack']
@@ -86,7 +86,7 @@ def get_feature_names():
     """Get the list of feature names used by the model."""
     return [
         'HighBP', 'HighChol', 'BMI', 'Smoker', 'PhysActivity',
-        'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age'
+        'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age', 'Diabetes_binary'
     ]
 
 
