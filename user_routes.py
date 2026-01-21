@@ -2,7 +2,7 @@
 
 from flask import render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
-from database import get_db, get_user_by_id, update_password
+from database import get_db, get_user_by_id, update_password, save_prediction, get_user_predictions
 from eda_analysis import (
     get_dataset_overview,
     analyze_target_distribution,
@@ -26,7 +26,7 @@ def dashboard():
     return render_template('dashboard.html', user_name=user['name'], user_id=user['user_id'])
 
 def profile():
-    """User profile page with personal information and password change."""
+    """User profile page with personal information and prediction history."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -34,35 +34,15 @@ def profile():
     if not user:
         return redirect(url_for('login'))
     
-    password_error = None
-    password_success = None
-    
-    if request.method == 'POST':
-        current_password = request.form.get('current_password', '').strip()
-        new_password = request.form.get('new_password', '').strip()
-        confirm_password = request.form.get('confirm_password', '').strip()
-        
-        if not all([current_password, new_password, confirm_password]):
-            password_error = 'All fields are required'
-        elif new_password != confirm_password:
-            password_error = 'New passwords do not match'
-        elif len(new_password) < 8:
-            password_error = 'Password must be at least 8 characters long'
-        elif not check_password_hash(user['password_hash'], current_password):
-            password_error = 'Current password is incorrect'
-        else:
-            # Update password
-            password_hash = generate_password_hash(new_password)
-            update_password(session['user_id'], password_hash)
-            password_success = 'Password updated successfully!'
+    # Get prediction history
+    predictions = get_user_predictions(session['user_id'])
     
     return render_template(
         'profile.html',
         user_name=user['name'],
         user_id=user['user_id'],
-        email=user['email'],
-        password_error=password_error,
-        password_success=password_success
+        user_email=user['email'],
+        predictions=predictions
     )
 
 def dataset():
@@ -97,6 +77,17 @@ def eda():
         return redirect(url_for('login'))
     
     return render_template('eda.html', user_name=user['name'], user_id=user['user_id'])
+
+def modeling():
+    """Modeling approach page."""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = get_user_by_id(session['user_id'])
+    if not user:
+        return redirect(url_for('login'))
+    
+    return render_template('modeling.html', user_name=user['name'], user_id=user['user_id'])
 
 def eda_overview():
     """API endpoint for dataset overview."""
@@ -176,7 +167,7 @@ def eda_stats():
         return jsonify({'error': str(e)}), 500
 
 def eda_interactions():
-    """API endpoint for feature interaction analysis."""
+    """API endpoint for feature interactions analysis."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -185,6 +176,89 @@ def eda_interactions():
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+def age_to_category(age):
+    """Convert actual age to BRFSS age category (1-13).
+    
+    BRFSS Age Categories:
+    1: 18-24, 2: 25-29, 3: 30-34, 4: 35-39, 5: 40-44,
+    6: 45-49, 7: 50-54, 8: 55-59, 9: 60-64, 10: 65-69,
+    11: 70-74, 12: 75-79, 13: 80+
+    """
+    age = int(age)
+    if age < 18:
+        return 1
+    elif age <= 24:
+        return 1
+    elif age <= 29:
+        return 2
+    elif age <= 34:
+        return 3
+    elif age <= 39:
+        return 4
+    elif age <= 44:
+        return 5
+    elif age <= 49:
+        return 6
+    elif age <= 54:
+        return 7
+    elif age <= 59:
+        return 8
+    elif age <= 64:
+        return 9
+    elif age <= 69:
+        return 10
+    elif age <= 74:
+        return 11
+    elif age <= 79:
+        return 12
+    else:
+        return 13
+
+def predict_health_risk():
+    """API endpoint for health risk prediction."""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        from models.predictor import get_predictor
+        
+        data = request.get_json()
+        model_name = data.get('model', 'random_forest')
+        
+        # Convert actual age to BRFSS category (1-13)
+        age_category = age_to_category(data.get('Age', 25))
+        
+        # Prepare prediction data with required features
+        prediction_data = {
+            'HighBP': int(data.get('HighBP', 0)),
+            'HighChol': int(data.get('HighChol', 0)),
+            'BMI': float(data.get('BMI', 25)),
+            'Smoker': int(data.get('Smoker', 0)),
+            'PhysActivity': int(data.get('PhysActivity', 0)),
+            'GenHlth': int(data.get('GenHlth', 3)),
+            'MentHlth': float(data.get('MentHlth', 0)),
+            'PhysHlth': float(data.get('PhysHlth', 0)),
+            'DiffWalk': int(data.get('DiffWalk', 0)),
+            'Sex': int(data.get('Sex', 0)),
+            'Age': float(age_category)
+        }
+        
+        predictor = get_predictor()
+        result = predictor.predict(prediction_data, model_name)
+        
+        # Save prediction to history
+        save_prediction(
+            session['user_id'],
+            model_name.replace('_', ' ').title(),
+            round(result['probability'] * 100, 1),
+            result['risk_level']
+        )
+        
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 def logout():
     """Log out the user by clearing the session."""
