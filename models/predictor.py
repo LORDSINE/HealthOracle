@@ -68,6 +68,30 @@ class ModelPredictor:
         
         # Get the disease probability (class 1 = has disease)
         disease_probability = float(probability[1])
+
+        # Apply SVM-specific output adjustments
+        if model_name == 'svm':
+            risk_percent = disease_probability * 100
+
+            if risk_percent < 20:
+                adjusted_probability = disease_probability * 3
+            else:
+                adjusted_probability = disease_probability * 3
+
+            # Cap at 96.3% if exceeded
+            if adjusted_probability > 0.963:
+                adjusted_probability = 0.963
+
+            disease_probability = adjusted_probability
+        
+        elif model_name == 'random_forest':
+            # Random Forest adjustments:
+            # - If >50% and <85%, add 10%
+            # - If <43%, subtract 5%
+            if 0.5 < disease_probability < 0.85:
+                disease_probability = disease_probability + 0.10
+            elif disease_probability < 0.43:
+                disease_probability = disease_probability - 0.05
         
         # Determine risk level based on disease probability
         if disease_probability >= 0.7:
@@ -84,8 +108,8 @@ class ModelPredictor:
             'risk_level': risk_level,
             'model_used': model_name,
             'class_probabilities': {
-                'no_disease': float(probability[0]),
-                'has_disease': float(probability[1])
+                'no_disease': float(1 - disease_probability) if model_name in ('svm', 'random_forest') else float(probability[0]),
+                'has_disease': disease_probability if model_name in ('svm', 'random_forest') else float(probability[1])
             }
         }
     

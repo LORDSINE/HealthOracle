@@ -61,7 +61,7 @@ def get_random_forest_model():
     
     # Create and train model
     rf_model = RandomForestClassifier(
-        n_estimators=100,
+        n_estimators=200,
         max_depth=15,
         min_samples_split=10,
         min_samples_leaf=5,
