@@ -8,5 +8,4 @@ __pycache__/
 # Database
 healthoracle.db
 
-models/joblib/random_forest.joblib
-models/joblib/logistic_regression.joblib
+models/joblib/
