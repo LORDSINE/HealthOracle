@@ -1,1 +1,1 @@
-"""Models package for health oracle."""
+# to set models/ as a package
