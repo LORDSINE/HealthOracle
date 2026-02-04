@@ -19,7 +19,6 @@ init_db()
 
 @app.route('/')
 def home():
-    """Redirect to login page."""
     return redirect(url_for('login'))
 
 # auth routes
@@ -54,7 +53,6 @@ app.add_url_rule('/api/eda/interactions', 'eda_interactions', eda_interactions)
 # Error route for model not implemented
 @app.route('/error/503')
 def trigger_503():
-    """Trigger 503 error for model not implemented."""
     from flask import abort
     abort(503)
 
@@ -64,27 +62,22 @@ def trigger_503():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    """Handle 404 errors - Page Not Found."""
     return render_template('errors/404.html'), 404
 
 @app.errorhandler(400)
 def bad_request(e):
-    """Handle 400 errors - Bad Request."""
     return render_template('errors/400.html'), 400
 
 @app.errorhandler(403)
 def forbidden(e):
-    """Handle 403 errors - Forbidden."""
     return render_template('errors/403.html'), 403
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    """Handle 500 errors - Internal Server Error."""
     return render_template('errors/500.html'), 500
 
 @app.errorhandler(503)
 def service_unavailable(e):
-    """Handle 503 errors - Service Unavailable."""
     return render_template('errors/503.html'), 503
 
 
