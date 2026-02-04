@@ -1,5 +1,3 @@
-"""Password reset functionality with OTP verification."""
-
 import random
 import time
 from flask import render_template, request, redirect, url_for
@@ -11,7 +9,6 @@ from email_service import send_email_otp
 OTP_STORE = {}
 
 def forgot_password():
-    """Handle forgot password requests and OTP verification."""
     error = None
     message = None
     email = ''

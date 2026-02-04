@@ -1,5 +1,3 @@
-"""EDA Analysis Backend - Processes and returns analysis results."""
-
 import pandas as pd
 import numpy as np
 import os
@@ -21,11 +19,9 @@ plt.rcParams['figure.figsize'] = (12, 6)
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data', 'health_dataset.csv')
 
 def load_data():
-    """Load the dataset."""
     return pd.read_csv(DATA_PATH)
 
 def fig_to_base64(fig):
-    """Convert matplotlib figure to base64 string."""
     buf = BytesIO()
     fig.savefig(buf, format='png', bbox_inches='tight', dpi=100)
     buf.seek(0)
@@ -34,7 +30,6 @@ def fig_to_base64(fig):
     return f'data:image/png;base64,{img_str}'
 
 def get_dataset_overview():
-    """Get basic dataset statistics."""
     df = load_data()
     return {
         'total_records': len(df),
@@ -45,7 +40,6 @@ def get_dataset_overview():
     }
 
 def analyze_target_distribution():
-    """Analyze target variable distribution with multiple plots."""
     df = load_data()
     target_counts = df['HeartDiseaseorAttack'].value_counts()
     target_pct = (target_counts / len(df) * 100).round(2)
@@ -92,14 +86,6 @@ def analyze_target_distribution():
     }
 
 def analyze_numerical_features():
-    """
-    Professional Numerical Features Analysis with 5 sections:
-    1. Statistical Summary Table
-    2. Distribution Plots (Histogram + KDE) for continuous features
-    3. Outlier Detection (Boxplots)
-    4. Numerical Features vs Target (Violin plots)
-    5. Correlation with Target (Bar chart)
-    """
     df = load_data()
     
     # Define feature categories
@@ -251,7 +237,6 @@ def analyze_numerical_features():
     }
 
 def analyze_categorical_features():
-    """Analyze categorical/binary features with bar charts."""
     df = load_data()
     binary_cols = ['HighBP', 'HighChol', 'Smoker', 'PhysActivity', 'DiffWalk', 'Sex']
     
@@ -315,7 +300,6 @@ def analyze_categorical_features():
     }
 
 def analyze_correlations():
-    """Analyze feature correlations with heatmap and bar charts."""
     df = load_data()
     corr_features = ['HeartDiseaseorAttack', 'HighBP', 'HighChol', 'BMI', 'Smoker',
                      'PhysActivity', 'DiffWalk', 'Sex', 'Age', 'GenHlth', 'MentHlth', 'PhysHlth']
@@ -372,7 +356,6 @@ def analyze_correlations():
     }
 
 def analyze_risk_factors():
-    """Analyze multiple risk factors with visualizations."""
     df = load_data()
     risk_cols = ['HighBP', 'HighChol', 'Smoker']
     
@@ -416,7 +399,6 @@ def analyze_risk_factors():
     }
 
 def analyze_statistical_tests():
-    """Perform statistical tests with visualizations."""
     df = load_data()
     binary_cols = ['HighBP', 'HighChol', 'Smoker', 'PhysActivity', 'DiffWalk', 'Sex']
     
@@ -463,7 +445,6 @@ def analyze_statistical_tests():
     }
 
 def analyze_feature_interactions():
-    """Analyze feature interactions - how combined factors affect heart disease risk."""
     df = load_data()
     
     # Create age groups if not exists

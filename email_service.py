@@ -1,11 +1,8 @@
-"""Email service for sending OTPs and notifications."""
-
 import os
 import smtplib
 from email.message import EmailMessage
 
 def send_email_otp(recipient: str, otp: str):
-    """Send OTP via SMTP; falls back to console log if SMTP config is missing."""
     smtp_host = os.getenv("SMTP_HOST")
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
     smtp_user = os.getenv("SMTP_USERNAME")
