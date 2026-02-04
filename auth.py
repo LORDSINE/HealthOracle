@@ -1,5 +1,3 @@
-"""Authentication routes and OAuth integration."""
-
 import os
 from flask import render_template, request, session, redirect, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,7 +8,6 @@ from database import get_db, get_user_by_id, get_user_by_email, create_user, get
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 def login():
-    """Handle user login."""
     error = None
     
     if request.method == 'POST':
@@ -36,7 +33,6 @@ def login():
     return render_template('login.html', error=error, message=message, google_client_id=google_client_id)
 
 def auth_google():
-    """Handle Google OAuth authentication via JSON request."""
     credential = request.json.get('credential') if request.is_json else None
     client_id = os.getenv('GOOGLE_CLIENT_ID')
 
@@ -75,7 +71,6 @@ def auth_google():
         return jsonify({'error': f'Google verification failed: {str(exc)}'}), 400
 
 def signup():
-    """Handle user registration."""
     error = None
     form_data = {
         'full_name': '',
@@ -149,7 +144,6 @@ def signup():
     return render_template('signup.html', error=error, google_client_id=google_client_id, form_data=form_data)
 
 def signup_success(user_id):
-    """Show success message with generated user_id for signup."""
     user = get_user_by_id(user_id)
     
     if not user:
@@ -158,7 +152,6 @@ def signup_success(user_id):
     return render_template('signup_success.html', user_id=user_id, email=user['email'], name=user['name'])
 
 def google_link():
-    """Link Google account to existing user or create new account."""
     error = None
     email = session.get('google_email')
     name = session.get('google_name', 'User')
@@ -228,7 +221,6 @@ def google_link():
     return render_template('google_link.html', email=email, name=name, error=error)
 
 def google_success(user_id):
-    """Show success message with generated user_id for Google signup."""
     email = session.get('google_email')
     if not email:
         return redirect(url_for('login'))

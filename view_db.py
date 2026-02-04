@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Simple script to view database contents"""
 import sqlite3
 from tabulate import tabulate
 
 DATABASE = 'healthoracle.db'
 
 def view_users():
-    """Display all users in a nice table format"""
     try:
         conn = sqlite3.connect(DATABASE)
         conn.row_factory = sqlite3.Row

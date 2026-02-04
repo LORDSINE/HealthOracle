@@ -1,5 +1,3 @@
-"""User routes and dashboard functionality."""
-
 from flask import render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from database import get_db, get_user_by_id, update_password, save_prediction, get_user_predictions
@@ -15,7 +13,6 @@ from eda_analysis import (
 )
 
 def dashboard():
-    """Dashboard page showing user information and project overview."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -26,7 +23,6 @@ def dashboard():
     return render_template('dashboard.html', user_name=user['name'], user_id=user['user_id'])
 
 def profile():
-    """User profile page with personal information and prediction history."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -46,7 +42,6 @@ def profile():
     )
 
 def dataset():
-    """Dataset page showing available datasets and features."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -57,7 +52,6 @@ def dataset():
     return render_template('dataset.html', user_name=user['name'], user_id=user['user_id'])
 
 def prediction():
-    """Health prediction page."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -68,7 +62,6 @@ def prediction():
     return render_template('prediction.html', user_name=user['name'], user_id=user['user_id'])
 
 def eda():
-    """Exploratory Data Analysis page."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -79,7 +72,6 @@ def eda():
     return render_template('eda.html', user_name=user['name'], user_id=user['user_id'])
 
 def modeling():
-    """Modeling approach page."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -90,7 +82,6 @@ def modeling():
     return render_template('modeling.html', user_name=user['name'], user_id=user['user_id'])
 
 def eda_overview():
-    """API endpoint for dataset overview."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -101,7 +92,6 @@ def eda_overview():
         return jsonify({'error': str(e)}), 500
 
 def eda_target():
-    """API endpoint for target distribution analysis."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -112,7 +102,6 @@ def eda_target():
         return jsonify({'error': str(e)}), 500
 
 def eda_numerical():
-    """API endpoint for numerical features analysis."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -123,7 +112,6 @@ def eda_numerical():
         return jsonify({'error': str(e)}), 500
 
 def eda_categorical():
-    """API endpoint for categorical features analysis."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -134,7 +122,6 @@ def eda_categorical():
         return jsonify({'error': str(e)}), 500
 
 def eda_correlation():
-    """API endpoint for correlation analysis."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -145,7 +132,6 @@ def eda_correlation():
         return jsonify({'error': str(e)}), 500
 
 def eda_risk():
-    """API endpoint for risk factor analysis."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -156,7 +142,6 @@ def eda_risk():
         return jsonify({'error': str(e)}), 500
 
 def eda_stats():
-    """API endpoint for statistical tests."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -167,7 +152,6 @@ def eda_stats():
         return jsonify({'error': str(e)}), 500
 
 def eda_interactions():
-    """API endpoint for feature interactions analysis."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -178,13 +162,6 @@ def eda_interactions():
         return jsonify({'error': str(e)}), 500
 
 def age_to_category(age):
-    """Convert actual age to BRFSS age category (1-13).
-    
-    BRFSS Age Categories:
-    1: 18-24, 2: 25-29, 3: 30-34, 4: 35-39, 5: 40-44,
-    6: 45-49, 7: 50-54, 8: 55-59, 9: 60-64, 10: 65-69,
-    11: 70-74, 12: 75-79, 13: 80+
-    """
     age = int(age)
     if age < 18:
         return 1
@@ -216,7 +193,6 @@ def age_to_category(age):
         return 13
 
 def predict_health_risk():
-    """API endpoint for health risk prediction."""
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
@@ -261,6 +237,5 @@ def predict_health_risk():
 
 
 def logout():
-    """Log out the user by clearing the session."""
     session.clear()
     return redirect(url_for('login'))
