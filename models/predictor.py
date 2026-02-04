@@ -1,4 +1,3 @@
-"""Prediction utilities for all models."""
 import os
 import warnings
 
@@ -15,17 +14,13 @@ from .svm_model import get_svm_model, get_feature_names as get_svm_features
 
 
 class ModelPredictor:
-    """Unified predictor for all models with lazy loading."""
-
     def __init__(self):
-        """Set up feature list and lazy model cache without loading models."""
         # Use feature list from logistic regression (same for both models)
         self.feature_names = get_lr_features()
         # Cache for loaded models: {'logistic_regression': model, 'random_forest': model}
         self._models = {}
 
     def _get_model(self, model_name: str):
-        """Load and cache only the requested model."""
         if model_name in self._models:
             return self._models[model_name]
 
@@ -42,16 +37,6 @@ class ModelPredictor:
         return model
 
     def predict(self, data_dict, model_name='random_forest'):
-        """
-        Make prediction using the specified model.
-        
-        Args:
-            data_dict (dict): Dictionary with feature names as keys and values
-            model_name (str): Name of the model to use ('svm', 'logistic_regression', 'random_forest')
-        
-        Returns:
-            dict: Prediction result with probability and risk level
-        """
         # Create DataFrame from input data with only required features
         data_to_use = {key: data_dict.get(key, 0) for key in self.feature_names}
         df = pd.DataFrame([data_to_use])
@@ -114,7 +99,6 @@ class ModelPredictor:
         }
     
     def get_feature_list(self):
-        """Get the list of required features for prediction."""
         return self.feature_names
 
 
@@ -123,7 +107,6 @@ _predictor = None
 
 
 def get_predictor():
-    """Get or create the global predictor instance."""
     global _predictor
     if _predictor is None:
         _predictor = ModelPredictor()

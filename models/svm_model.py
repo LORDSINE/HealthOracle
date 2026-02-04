@@ -1,4 +1,3 @@
-"""Support Vector Machine model for heart disease prediction."""
 import os
 import pandas as pd
 import joblib
@@ -9,21 +8,11 @@ from sklearn.model_selection import train_test_split
 
 
 def get_model_path():
-    """Get the joblib directory path."""
     current_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(current_dir, 'joblib')
 
 
 def get_svm_model():
-    """
-    Load or train the SVM model.
-    
-    If the model exists in the joblib directory, load it.
-    Otherwise, train it from the dataset and save it.
-    
-    Returns:
-        Pipeline: The trained or loaded SVM model.
-    """
     joblib_dir = get_model_path()
     model_path = os.path.join(joblib_dir, 'svm.joblib')
     
@@ -86,7 +75,6 @@ def get_svm_model():
 
 
 def get_feature_names():
-    """Get the list of feature names used by the model."""
     return [
         'HighBP', 'HighChol', 'BMI', 'Smoker', 'PhysActivity',
         'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age', 'Diabetes_binary'
