@@ -514,3 +514,119 @@ def analyze_feature_interactions():
     return {
         'chart': fig_to_base64(fig)
     }
+
+
+def evaluate_models():
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+    from sklearn.model_selection import train_test_split
+    
+    data_path = os.path.join(os.path.dirname(__file__), 'data', 'health_data_ml_01.csv')
+    df = pd.read_csv(data_path)
+    
+    feature_cols = ['HighBP', 'HighChol', 'BMI', 'Smoker', 'PhysActivity',
+                    'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age', 'Diabetes_binary']
+    
+    X = df[feature_cols].to_numpy(dtype=float)
+    y = df['HeartDiseaseorAttack'].to_numpy(dtype=int)
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+    
+    models_metrics = []
+    
+    try:
+        from models.logistic_regression_model import get_logistic_regression_model
+        lr_model = get_logistic_regression_model()
+        y_pred_lr = lr_model.predict(X_test)
+        
+        models_metrics.append({
+            'model': 'Logistic Regression',
+            'accuracy': round(accuracy_score(y_test, y_pred_lr) * 100, 2),
+            'precision': round(precision_score(y_test, y_pred_lr) * 100, 2),
+            'recall': round(recall_score(y_test, y_pred_lr) * 100, 2),
+            'f1_score': round(f1_score(y_test, y_pred_lr) * 100, 2),
+            'confusion_matrix': confusion_matrix(y_test, y_pred_lr).tolist()
+        })
+    except Exception as e:
+        print(f"Error evaluating Logistic Regression: {e}")
+    
+    try:
+        from models.random_forest_model import get_random_forest_model
+        rf_model = get_random_forest_model()
+        y_pred_rf = rf_model.predict(X_test)
+        
+        models_metrics.append({
+            'model': 'Random Forest',
+            'accuracy': round(accuracy_score(y_test, y_pred_rf) * 100, 2),
+            'precision': round(precision_score(y_test, y_pred_rf) * 100, 2),
+            'recall': round(recall_score(y_test, y_pred_rf) * 100, 2),
+            'f1_score': round(f1_score(y_test, y_pred_rf) * 100, 2),
+            'confusion_matrix': confusion_matrix(y_test, y_pred_rf).tolist()
+        })
+    except Exception as e:
+        print(f"Error evaluating Random Forest: {e}")
+    
+    try:
+        from models.svm_model import get_svm_model
+        svm_pipeline = get_svm_model()
+        y_pred_svm = svm_pipeline.predict(X_test)
+        
+        models_metrics.append({
+            'model': 'Support Vector Machine',
+            'accuracy': round(accuracy_score(y_test, y_pred_svm) * 100, 2),
+            'precision': round(precision_score(y_test, y_pred_svm) * 100, 2),
+            'recall': round(recall_score(y_test, y_pred_svm) * 100, 2),
+            'f1_score': round(f1_score(y_test, y_pred_svm) * 100, 2),
+            'confusion_matrix': confusion_matrix(y_test, y_pred_svm).tolist()
+        })
+    except Exception as e:
+        print(f"Error evaluating SVM: {e}")
+    
+    fig, axes = plt.subplots(1, 2, figsize=(18, 6))
+    
+    if models_metrics:
+        models_names = [m['model'] for m in models_metrics]
+        metrics = ['accuracy', 'precision', 'recall', 'f1_score']
+        metric_labels = ['Accuracy', 'Precision', 'Recall', 'F1-Score']
+        
+        x = np.arange(len(models_names))
+        width = 0.2
+        
+        for i, (metric, label) in enumerate(zip(metrics, metric_labels)):
+            values = [m[metric] for m in models_metrics]
+            axes[0].bar(x + i * width, values, width, label=label, alpha=0.8)
+        
+        axes[0].set_xlabel('Models', fontsize=12, fontweight='bold')
+        axes[0].set_ylabel('Score (%)', fontsize=12, fontweight='bold')
+        axes[0].set_title('Model Performance Comparison', fontsize=14, fontweight='bold')
+        axes[0].set_xticks(x + width * 1.5)
+        axes[0].set_xticklabels(models_names, rotation=15, ha='right')
+        axes[0].legend(loc='lower right')
+        axes[0].grid(axis='y', alpha=0.3)
+        axes[0].set_ylim(0, 100)
+        
+        for i, model_data in enumerate(models_metrics):
+            for j, metric in enumerate(metrics):
+                value = model_data[metric]
+                axes[0].text(i + j * width, value + 1, f'{value:.1f}%', 
+                           ha='center', va='bottom', fontsize=8, fontweight='bold')
+        
+        metric_avg = {metric: np.mean([m[metric] for m in models_metrics]) for metric in metrics}
+        axes[1].barh(metric_labels, [metric_avg[m] for m in metrics], 
+                    color=['#3B82F6', '#10B981', '#F59E0B', '#EC4899'], alpha=0.8)
+        axes[1].set_xlabel('Average Score (%)', fontsize=12, fontweight='bold')
+        axes[1].set_title('Average Metrics Across All Models', fontsize=14, fontweight='bold')
+        axes[1].grid(axis='x', alpha=0.3)
+        axes[1].set_xlim(0, 100)
+        
+        for i, (label, value) in enumerate(zip(metric_labels, [metric_avg[m] for m in metrics])):
+            axes[1].text(value + 1, i, f'{value:.1f}%', 
+                        va='center', fontsize=10, fontweight='bold')
+    
+    plt.tight_layout()
+    
+    return {
+        'metrics': models_metrics,
+        'chart': fig_to_base64(fig) if models_metrics else None
+    }

@@ -9,7 +9,8 @@ from eda_analysis import (
     analyze_correlations,
     analyze_risk_factors,
     analyze_statistical_tests,
-    analyze_feature_interactions
+    analyze_feature_interactions,
+    evaluate_models
 )
 
 def dashboard():
@@ -157,6 +158,16 @@ def eda_interactions():
     
     try:
         data = analyze_feature_interactions()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def eda_model_evaluation():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = evaluate_models()
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500

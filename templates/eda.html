@@ -100,6 +100,13 @@
                 <p>Chi-square tests, p-values, and Cramer's V effect sizes</p>
                 <button class="btn-analysis" onclick="showSection('stats')">View Analysis</button>
             </div>
+
+            <div class="analysis-card">
+                <div class="analysis-icon">🎯</div>
+                <h4>Model Evaluation Metrics</h4>
+                <p>Accuracy, Precision, Recall, and F1-Score for all models</p>
+                <button class="btn-analysis" onclick="showSection('evaluation')">View Analysis</button>
+            </div>
         </div>
     </div>
 
@@ -135,6 +142,11 @@
             <div style="background: linear-gradient(135deg, #fce7f3, #fbcfe8); padding: 1rem; border-radius: 8px; border-left: 4px solid #ec4899;">
                 <h5 style="margin: 0 0 0.5rem 0; color: #9d174d;">🔗 Feature Interactions</h5>
                 <p style="margin: 0; font-size: 0.9rem; color: #831843;">Multiple risk factors (HighBP + HighChol + Diabetes) show compound effect on disease risk.</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe); padding: 1rem; border-radius: 8px; border-left: 4px solid #6366f1;">
+                <h5 style="margin: 0 0 0.5rem 0; color: #3730a3;">🎯 Model Performance</h5>
+                <p style="margin: 0; font-size: 0.9rem; color: #312e81;">All models achieve good accuracy with balanced precision and recall metrics on the test dataset.</p>
             </div>
         </div>
     </div>
@@ -205,6 +217,10 @@ function showSection(section) {
         case 'stats':
             endpoint = '/api/eda/stats';
             title = '🔬 Section 8: Statistical Tests';
+            break;
+        case 'evaluation':
+            endpoint = '/api/eda/model-evaluation';
+            title = '🎯 Section 9: Model Evaluation Metrics';
             break;
     }
     
@@ -364,6 +380,50 @@ function displayResults(data, title, section) {
                 </tr>`;
             });
             html += '</tbody></table>';
+        } else if (section === 'evaluation' && data.metrics) {
+            html += '<div class="eda-section"><h4 class="section-title">📊 Model Performance Metrics</h4>';
+            html += '<p class="section-desc">Evaluation metrics for all three models on the test dataset (20% split).</p>';
+            html += '<table class="stats-table"><thead><tr><th>Model</th><th>Accuracy (%)</th><th>Precision (%)</th><th>Recall (%)</th><th>F1-Score (%)</th></tr></thead><tbody>';
+            data.metrics.forEach(item => {
+                html += `<tr>
+                    <td><strong>${item.model}</strong></td>
+                    <td>${item.accuracy}%</td>
+                    <td>${item.precision}%</td>
+                    <td>${item.recall}%</td>
+                    <td>${item.f1_score}%</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            
+            html += '<div style="margin-top: 2rem;"><h4 class="section-title">📈 Confusion Matrices</h4>';
+            data.metrics.forEach(item => {
+                const cm = item.confusion_matrix;
+                html += `<div style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <h5 style="margin-bottom: 0.5rem;">${item.model}</h5>
+                    <table class="stats-table" style="max-width: 400px;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Predicted: No</th>
+                                <th>Predicted: Yes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Actual: No</strong></td>
+                                <td style="background: #dcfce7;">${cm[0][0]}</td>
+                                <td style="background: #fee2e2;">${cm[0][1]}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Actual: Yes</strong></td>
+                                <td style="background: #fee2e2;">${cm[1][0]}</td>
+                                <td style="background: #dcfce7;">${cm[1][1]}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`;
+            });
+            html += '</div></div>';
         }
         
         html += '</div>';
