@@ -105,7 +105,107 @@
     </div>
 </div>
 
+<div class="content-card" style="margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">Dataset Preview</h2>
+        <a href="/api/dataset/download" class="btn-primary" style="text-decoration: none; padding: 0.5rem 1.5rem; background: #1976d2; color: white; border-radius: 4px; font-size: 0.9rem;">
+            📥 Download Dataset
+        </a>
+    </div>
+    
+    <div id="datasetPreview">
+        <div style="text-align: center; padding: 2rem; color: #666;">
+            <div style="margin-bottom: 1rem;">Loading dataset preview...</div>
+            <div class="spinner" style="margin: 0 auto;"></div>
+        </div>
+    </div>
+</div>
+
 <div class="disclaimer">
     <strong>Disclaimer:</strong> This application is developed for academic and research purposes only. It does not replace professional medical advice.
 </div>
+
+<style>
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #1976d2;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    display: block;
+}
+
+.data-table thead {
+    background: #f5f5f5;
+}
+
+.data-table th {
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.data-table tr:hover {
+    background: #f9f9f9;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/dataset/preview')
+        .then(response => response.json())
+        .then(data => {
+            displayDatasetPreview(data);
+        })
+        .catch(error => {
+            document.getElementById('datasetPreview').innerHTML = 
+                '<div style="text-align: center; padding: 2rem; color: #d32f2f;">Error loading dataset preview</div>';
+        });
+});
+
+function displayDatasetPreview(data) {
+    let html = '<div style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">Showing first 10 rows of ' + data.total_rows.toLocaleString() + ' total records</div>';
+    html += '<div style="overflow-x: auto;"><table class="data-table"><thead><tr>';
+    
+    data.columns.forEach(col => {
+        html += '<th>' + col + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+    
+    data.data.forEach(row => {
+        html += '<tr>';
+        data.columns.forEach(col => {
+            let value = row[col];
+            if (typeof value === 'number') {
+                value = value.toFixed(2);
+            }
+            html += '<td>' + value + '</td>';
+        });
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table></div>';
+    document.getElementById('datasetPreview').innerHTML = html;
+}
+</script>
 {% endblock %}

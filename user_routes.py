@@ -52,6 +52,39 @@ def dataset():
     
     return render_template('dataset.html', user_name=user['name'], user_id=user['user_id'])
 
+def dataset_preview():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        import pandas as pd
+        import os
+        data_path = os.path.join(os.path.dirname(__file__), 'data', 'health_dataset.csv')
+        df = pd.read_csv(data_path)
+        
+        preview_data = df.head(10).to_dict('records')
+        columns = df.columns.tolist()
+        
+        return jsonify({
+            'columns': columns,
+            'data': preview_data,
+            'total_rows': len(df)
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def dataset_download():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    try:
+        from flask import send_file
+        import os
+        data_path = os.path.join(os.path.dirname(__file__), 'data', 'health_dataset.csv')
+        return send_file(data_path, as_attachment=True, download_name='health_dataset.csv')
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
 def prediction():
     if 'user_id' not in session:
         return redirect(url_for('login'))
