@@ -18,7 +18,13 @@ def get_random_forest_model():
     if os.path.exists(model_path):
         try:
             print("Loading pre-trained Random Forest model...")
-            return joblib.load(model_path)
+            loaded = joblib.load(model_path)
+            if isinstance(loaded, dict):
+                if "model" in loaded:
+                    return loaded["model"]
+                if "pipeline" in loaded:
+                    return loaded["pipeline"]
+            return loaded
         except Exception as e:
             print(f"Failed to load pre-trained Random Forest model ({e}). Deleting and retraining...")
             try:
@@ -26,14 +32,14 @@ def get_random_forest_model():
             except Exception:
                 pass
     
-    # Otherwise, train the model
+
     print("Training Random Forest model...")
     
-    # Load and prepare data (using normalized dataset)
+
     data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'health_data_ml_01.csv')
     df = pd.read_csv(data_path)
     
-    # Select only required features (all values already normalized 0-1)
+
     feature_cols = ['HighBP', 'HighChol', 'BMI', 'Smoker', 'PhysActivity',
                     'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age', 'Diabetes_binary']
     
@@ -61,7 +67,7 @@ def get_random_forest_model():
     
     rf_model.fit(X_train, y_train)
     
-    # Create joblib directory if it doesn't exist
+
     os.makedirs(joblib_dir, exist_ok=True)
     
     # Save the model
