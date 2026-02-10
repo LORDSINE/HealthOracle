@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from database import init_db
 from auth import login, auth_google, signup, google_link, google_success, signup_success
 from user_routes import (
-    dashboard, profile, dataset, dataset_preview, dataset_download, prediction, logout, eda, predict_health_risk, modeling,
+    dashboard, profile, prediction_history, dataset, dataset_preview, dataset_download, prediction, logout, eda, predict_health_risk, modeling,
     eda_overview, eda_target, eda_numerical, eda_categorical, eda_correlation, eda_risk, eda_stats, eda_interactions, eda_model_evaluation
 )
 from password_reset import forgot_password
@@ -33,6 +33,7 @@ app.add_url_rule('/forgot', 'forgot_password', forgot_password, methods=['GET', 
 # user routes
 app.add_url_rule('/dashboard', 'dashboard', dashboard)
 app.add_url_rule('/profile', 'profile', profile)
+app.add_url_rule('/prediction-history', 'prediction_history', prediction_history)
 app.add_url_rule('/dataset', 'dataset', dataset)
 app.add_url_rule('/api/dataset/preview', 'dataset_preview', dataset_preview)
 app.add_url_rule('/api/dataset/download', 'dataset_download', dataset_download)

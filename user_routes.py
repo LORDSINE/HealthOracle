@@ -42,6 +42,24 @@ def profile():
         predictions=predictions
     )
 
+def prediction_history():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = get_user_by_id(session['user_id'])
+    if not user:
+        return redirect(url_for('login'))
+    
+    # Get all predictions (no limit)
+    predictions = get_user_predictions(session['user_id'], limit=100)
+    
+    return render_template(
+        'prediction_history.html',
+        user_name=user['name'],
+        user_id=user['user_id'],
+        predictions=predictions
+    )
+
 def dataset():
     if 'user_id' not in session:
         return redirect(url_for('login'))
