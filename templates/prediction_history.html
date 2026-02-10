@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History - Health Oracle{% endblock %}
+
+{% block page_class %}dashboard-layout{% endblock %}
+
+{% block user_avatar %}{{ user_name[0] if user_name else 'U' }}{% endblock %}
+{% block user_name %}{{ user_name or 'User' }}{% endblock %}
+{% block user_id %}{{ user_id }}{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <div class="history-header">
+        <div class="header-content">
+            <a href="{{ url_for('profile') }}" class="back-link">← Back to Profile</a>
+            <h1>Prediction History</h1>
+            <p>Complete record of all your health risk assessments</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ predictions|length }}</span>
+                <span class="stat-label">Total Predictions</span>
+            </div>
+            <div class="stat-card high-risk">
+                <span class="stat-number">{{ predictions|selectattr('risk_level', 'equalto', 'High Risk')|list|length }}</span>
+                <span class="stat-label">High Risk</span>
+            </div>
+            <div class="stat-card medium-risk">
+                <span class="stat-number">{{ predictions|selectattr('risk_level', 'equalto', 'Medium Risk')|list|length }}</span>
+                <span class="stat-label">Medium Risk</span>
+            </div>
+            <div class="stat-card low-risk">
+                <span class="stat-number">{{ predictions|selectattr('risk_level', 'equalto', 'Low Risk')|list|length }}</span>
+                <span class="stat-label">Low Risk</span>
+            </div>
+        </div>
+    </div>
+
+    {% if predictions and predictions|length > 0 %}
+    <div class="history-content">
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label>Filter by Risk Level:</label>
+                <select id="riskFilter" onchange="filterPredictions()">
+                    <option value="all">All Predictions</option>
+                    <option value="High Risk">High Risk Only</option>
+                    <option value="Medium Risk">Medium Risk Only</option>
+                    <option value="Low Risk">Low Risk Only</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Filter by Model:</label>
+                <select id="modelFilter" onchange="filterPredictions()">
+                    <option value="all">All Models</option>
+                    <option value="Logistic Regression">Logistic Regression</option>
+                    <option value="Random Forest">Random Forest</option>
+                    <option value="SVM">SVM</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="predictions-grid">
+            {% for pred in predictions %}
+            <div class="prediction-card {{ pred.risk_level|lower|replace(' ', '-') }}" 
+                 data-risk="{{ pred.risk_level }}" 
+                 data-model="{{ pred.model_used }}">
+                <div class="card-header">
+                    <div class="risk-badge {{ pred.risk_level|lower|replace(' ', '-') }}">
+                        {% if pred.risk_level == 'High Risk' %}
+                        ⚠️
+                        {% elif pred.risk_level == 'Medium Risk' %}
+                        ⚡
+                        {% else %}
+                        ✓
+                        {% endif %}
+                        {{ pred.risk_level }}
+                    </div>
+                    <span class="prediction-date">{{ pred.created_at }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="probability-display">
+                        <div class="probability-ring" style="--probability: {{ pred.probability }}">
+                            <span class="probability-value">{{ pred.probability }}%</span>
+                        </div>
+                        <span class="probability-label">Risk Probability</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="model-info">
+                        <span class="model-icon">🤖</span>
+                        <span class="model-name">{{ pred.model_used }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div id="noResults" class="no-results" style="display: none;">
+            <p>🔍</p>
+            <p>No predictions match your filter criteria</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <h2>No Predictions Yet</h2>
+        <p>Start making health predictions to build your history</p>
+        <a href="{{ url_for('prediction') }}" class="btn-primary">Make Your First Prediction</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.history-header {
+    margin-bottom: 2rem;
+}
+
+.back-link {
+    color: #1976d2;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #1565c0;
+    text-decoration: underline;
+}
+
+.header-content h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.header-content p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.header-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+.stat-card.high-risk {
+    border-left: 4px solid #ef4444;
+}
+
+.stat-card.high-risk .stat-number {
+    color: #dc2626;
+}
+
+.stat-card.medium-risk {
+    border-left: 4px solid #f59e0b;
+}
+
+.stat-card.medium-risk .stat-number {
+    color: #d97706;
+}
+
+.stat-card.low-risk {
+    border-left: 4px solid #22c55e;
+}
+
+.stat-card.low-risk .stat-number {
+    color: #16a34a;
+}
+
+.history-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.filter-group select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #1976d2;
+}
+
+.predictions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.prediction-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.prediction-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.prediction-card.high-risk {
+    border-top: 4px solid #ef4444;
+}
+
+.prediction-card.medium-risk {
+    border-top: 4px solid #f59e0b;
+}
+
+.prediction-card.low-risk {
+    border-top: 4px solid #22c55e;
+}
+
+.card-header {
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.risk-badge.high-risk {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.risk-badge.medium-risk {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.risk-badge.low-risk {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.prediction-date {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.card-body {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.probability-display {
+    text-align: center;
+}
+
+.probability-ring {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #1976d2 calc(var(--probability) * 3.6deg),
+        #e0e0e0 0deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    position: relative;
+}
+
+.probability-ring::before {
+    content: '';
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    background: white;
+    border-radius: 50%;
+}
+
+.probability-value {
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.probability-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.card-footer {
+    padding: 1rem 1.25rem;
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+}
+
+.model-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.model-icon {
+    font-size: 1rem;
+}
+
+.model-name {
+    font-weight: 500;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+}
+
+.no-results p:first-child {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state {
+    background: white;
+    padding: 4rem 2rem;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #1976d2;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #1565c0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .predictions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function filterPredictions() {
+    const riskFilter = document.getElementById('riskFilter').value;
+    const modelFilter = document.getElementById('modelFilter').value;
+    const cards = document.querySelectorAll('.prediction-card');
+    const noResults = document.getElementById('noResults');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const risk = card.dataset.risk;
+        const model = card.dataset.model;
+        
+        const matchesRisk = riskFilter === 'all' || risk === riskFilter;
+        const matchesModel = modelFilter === 'all' || model === modelFilter;
+        
+        if (matchesRisk && matchesModel) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+</script>
+{% endblock %}

@@ -38,12 +38,17 @@
 
     <!-- Prediction History Section -->
     <div class="profile-card">
-        <h2>Prediction History</h2>
-        <p style="color: #666; margin-bottom: 1rem;">Your recent health risk predictions</p>
+        <div class="section-header">
+            <h2>Recent Predictions</h2>
+            {% if predictions and predictions|length > 0 %}
+            <a href="{{ url_for('prediction_history') }}" class="view-all-link">View All History →</a>
+            {% endif %}
+        </div>
+        <p style="color: #666; margin-bottom: 1rem;">Your latest health risk prediction</p>
         
         {% if predictions and predictions|length > 0 %}
         <div class="prediction-history">
-            {% for pred in predictions %}
+            {% for pred in predictions[:1] %}
             <div class="prediction-item" style="background: {% if pred.risk_level == 'High Risk' %}#fee2e2{% elif pred.risk_level == 'Medium Risk' %}#fef3c7{% else %}#dcfce7{% endif %}; border-left: 4px solid {% if pred.risk_level == 'High Risk' %}#ef4444{% elif pred.risk_level == 'Medium Risk' %}#f59e0b{% else %}#22c55e{% endif %};">
                 <div class="pred-header">
                     <span class="pred-date">{{ pred.created_at }}</span>
@@ -55,9 +60,14 @@
             </div>
             {% endfor %}
         </div>
+        {% if predictions|length > 1 %}
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="{{ url_for('prediction_history') }}" class="btn-view-more">View {{ predictions|length - 1 }} more predictions</a>
+        </div>
+        {% endif %}
         {% else %}
         <div style="text-align: center; padding: 2rem; color: #666;">
-            <p style="font-size: 2rem; margin-bottom: 0.5rem;">--</p>
+            <p style="font-size: 2rem; margin-bottom: 0.5rem;">📊</p>
             <p>No predictions yet</p>
             <a href="{{ url_for('prediction') }}" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Make Your First Prediction</a>
         </div>
@@ -103,8 +113,45 @@
 
 .profile-card h2 {
     font-size: 1.25rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     color: #333;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.view-all-link {
+    color: #1976d2;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.view-all-link:hover {
+    color: #1565c0;
+    text-decoration: underline;
+}
+
+.btn-view-more {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #f0f7ff;
+    color: #1976d2;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-view-more:hover {
+    background: #e0efff;
+    color: #1565c0;
 }
 
 .profile-section {
